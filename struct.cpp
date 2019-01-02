@@ -1,5 +1,5 @@
 //
-// Created by 西山大輝 on 2018/12/12.
+// Created on 2018/12/12.
 //
 
 #include "struct.h"
@@ -18,9 +18,9 @@ void printState(struct _State *state) {
         if (state[i].ARRIVED) {
             printf("\tARRIVED.");
         }
-        printf("\nPOSITION : (%f,%f)\tVELOCITY : %fkm/h\tHEIGHT : %fm\tDIRECTION : %fπrad\tDELAY : %fmin\n",
+        printf("\nPOSITION : (%f,%f)\tVELOCITY : %fkm/h\tHEIGHT : %fm\tDIRECTION : %fπrad\tDELAY : %fmin\tCRUISINGDIST : %fkm\n",
                state[i].x, state[i].y, toKm(state[i].velocity), state[i].height, -state[i].direction / M_PI,
-               state[i].Delay);
+               state[i].Delay, state[i].Crusing_Distance);
     }
     printf("\n");
 }
@@ -80,5 +80,7 @@ void Initialize_Airplane() {    //試験的に２機のみ
         Airplane[i].Comfort = 0;
         Airplane[i].nextPoint = &ADDUM;
         Airplane[i].ARRIVED = 0;
+        Airplane[i].Turning = 0;
+        Airplane[i].initialdir = 0.0;
     }
 }

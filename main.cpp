@@ -1,5 +1,5 @@
 #include <GLUT/glut.h>
-#include <math.h>
+#include <cmath>
 #include <stdlib.h>
 #include <stdio.h>
 #include <algorithm>
@@ -18,8 +18,9 @@ int TIME[3] = {0, 0, 16};
 double NewDire;
 double New_x, New_y, dPos = 0;
 double RemainingDist, RDsub, velAcce, dropAcce;
-double RDsq, origin;
-double CruisingDist = 0;
+double origin;
+double straight = toKm(15);
+int mustStraight = 0, mustTurn = 0;
 
 void JudgeState() {
     int area[6];
@@ -28,28 +29,29 @@ void JudgeState() {
             dPos = Airplane[i].velocity;
             CheckTerritory(&Airplane[i], &Airplane[0], i, area);
             ///*航続距離の更新*///----------------------------------------------------------------------------------------
-            CruisingDist += dPos;
+            Airplane[i].Crusing_Distance += dPos;
             //----------------------------------------------------------------------------------------------------------
 
 
             ///*速度の更新*///-------------------------------------------------------------------------------------------
             origin = Airplane[i].velocity;
-            RemainingDist = sqrt(
-                    pow(Airplane[i].nextPoint->x - Airplane[i].x, 2) + pow(Airplane[i].nextPoint->y - Airplane[i].y, 2)
-            );
-            if (Airplane[i].nextPoint->velocity != 0) {
-                velAcce = (Airplane[i].nextPoint->velocity - Airplane[i].velocity) / RemainingDist;
-            } else {
-                RDsub = RemainingDist + sqrt(
-                        pow(Airplane[i].nextPoint->next->x - Airplane[i].nextPoint->x, 2)
-                        + pow(Airplane[i].nextPoint->next->y - Airplane[i].nextPoint->y, 2)
-                );
-                velAcce = (Airplane[i].nextPoint->next->velocity - Airplane[i].velocity) / RDsub;
-            }
-            if (velAcce * dPos < VelocityAcceMax) {
-                Airplane[i].velocity += VelocityAcceMax;
-            } else {
-                Airplane[i].velocity += velAcce * dPos;
+            RemainingDist = sqrt(pow(Airplane[i].nextPoint->x - Airplane[i].x, 2) +
+                                 pow(Airplane[i].nextPoint->y - Airplane[i].y, 2));
+            if (!Airplane[i].Turning) {
+                if (Airplane[i].nextPoint->velocity != 0) {
+                    velAcce = (Airplane[i].nextPoint->velocity - Airplane[i].velocity) / RemainingDist;
+                } else {
+                    RDsub = RemainingDist + sqrt(
+                            pow(Airplane[i].nextPoint->next->x - Airplane[i].nextPoint->x, 2)
+                            + pow(Airplane[i].nextPoint->next->y - Airplane[i].nextPoint->y, 2)
+                    );
+                    velAcce = (Airplane[i].nextPoint->next->velocity - Airplane[i].velocity) / RDsub;
+                }
+                if (velAcce * dPos < VelocityAcceMax) {
+                    Airplane[i].velocity += VelocityAcceMax;
+                } else {
+                    Airplane[i].velocity += velAcce * dPos;
+                }
             }
             while (!area[0]) {
                 if (area[1] || area[2] || area[3] || area[4]) { Airplane[i].velocity -= toDot(0.001); }
@@ -68,12 +70,30 @@ void JudgeState() {
             origin = Airplane[i].direction;
             NewDire = atan2(Airplane[i].nextPoint->y - Airplane[i].y,
                             Airplane[i].nextPoint->x - Airplane[i].x);
-            if (NewDire - origin > 0) {
-                Airplane[i].direction = maxDirection() < NewDire - origin ? Airplane[i].direction += maxDirection()
-                                                                          : Airplane[i].direction = NewDire;
-            } else if (NewDire - origin < 0) {
-                Airplane[i].direction = -maxDirection() > NewDire - origin ? Airplane[i].direction -= maxDirection()
-                                                                           : Airplane[i].direction = NewDire;
+            if (!Airplane[i].Turning) {
+                if (NewDire - origin > 0) {
+                    Airplane[i].direction = maxDirection() < NewDire - origin ? Airplane[i].direction += maxDirection()
+                                                                              : Airplane[i].direction = NewDire;
+                } else if (NewDire - origin < 0) {
+                    Airplane[i].direction = -maxDirection() > NewDire - origin ? Airplane[i].direction -= maxDirection()
+                                                                               : Airplane[i].direction = NewDire;
+                }
+            } else {
+                //左1右2曲がるな0??_????????
+                if (mustTurn==1) {
+                    if (abs(Airplane[i].direction - Airplane[i].initialdir) < M_PI) {
+                        Airplane[i].direction -= maxDirection();
+                    } else {
+                        mustStraight = 1;
+                    }
+                } else if(mustTurn==2){
+                    if (abs(Airplane[i].direction - Airplane[i].initialdir) > 0) {
+                        Airplane[i].direction += maxDirection();
+                    } else {
+                        mustTurn = 0;
+                        mustStraight = 1;
+                    }
+                }
             }
             int flag1 = 0, flag2 = 0;
             while (!area[0] && !area[5]) {
@@ -130,12 +150,18 @@ void JudgeState() {
                     printState(Airplane);
                     Airplane[i].ARRIVED = 1;
                 } else {
-                    Airplane[i].nextPoint = Airplane[i].nextPoint->next;
+                    if (Memory.Wait_order == 1) {
+                        Airplane[i].Turning = 1;
+                        Airplane[i].initialdir = Airplane[i].direction;
+                    } else {
+                        Airplane[i].nextPoint = Airplane[i].nextPoint->next;
+                    }
                 }
             }
             //----------------------------------------------------------------------------------------------------------
         }
     }
+
     TimePlus();
 }
 

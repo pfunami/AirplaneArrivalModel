@@ -1,5 +1,5 @@
 //
-// Created by 西山大輝 on 2018/12/12.
+// Created on 2018/12/12.
 //
 
 #include <math.h>

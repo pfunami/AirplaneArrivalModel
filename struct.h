@@ -1,5 +1,5 @@
 //
-// Created by 西山大輝 on 2018/12/12.
+// Created on 2018/12/12.
 //
 
 #ifndef PROGRAM_STRUCT_H
@@ -29,6 +29,9 @@ struct _State { //飛行機の状態を示す
 
     struct _Point *nextPoint;
     int ARRIVED;
+
+    int Turning;
+    double initialdir;
 };
 
 struct _Memory {    //世界の情報を示す
@@ -39,8 +42,11 @@ struct _Memory {    //世界の情報を示す
 };
 
 void printState(struct _State *state);
+
 void Initialize_Airplane();
+
 void Initialize_Memory();
+
 void Initialize_Point();
 
 #endif //PROGRAM_STRUCT_H

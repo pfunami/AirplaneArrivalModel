@@ -1,6 +1,3 @@
-//
-// Created by 西山大輝 on 2018/12/12.
-//
 
 #ifndef PROGRAM_MAIN_H
 #define PROGRAM_MAIN_H
