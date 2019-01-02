@@ -81,6 +81,9 @@ void Initialize_Airplane() {    //試験的に２機のみ
         Airplane[i].nextPoint = &ADDUM;
         Airplane[i].ARRIVED = 0;
         Airplane[i].Turning = 0;
+        Airplane[i].phase = 0;
         Airplane[i].initialdir = 0.0;
+        Airplane[i].initialx = 0.0;
+        Airplane[i].initialy = 0.0;
     }
 }

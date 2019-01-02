@@ -7,6 +7,9 @@
 #include "main.h"
 #include "struct.h"
 
+extern struct _Memory Memory;
+extern struct _State Airplane[N];
+
 double toRad(double r) { return r * M_PI / 180.0; }
 
 double toDot(double r) { return r * 1.4 / 60.0 / 60.0; }
@@ -68,4 +71,21 @@ void CheckTerritory(struct _State *checkPlane, struct _State *others, int i, int
         }
     }
     if (flag) { area[0] = 1; }
+}
+
+void ChangeWaitOrder() {
+    if (Memory.Wait_order) {
+        Memory.Wait_order = 0;
+        for (int i = 0; i < N; ++i) {
+            Airplane[i].phase = 0;
+            if (Airplane[i].Turning) {
+                Airplane[i].Turning = 0;
+            }
+        }
+    } else {
+        Memory.Wait_order = 1;
+        for (int i = 0; i < N; ++i) {
+            Airplane[i].phase = 1;
+        }
+    }
 }

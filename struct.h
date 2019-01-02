@@ -31,7 +31,10 @@ struct _State { //飛行機の状態を示す
     int ARRIVED;
 
     int Turning;
+    int phase;
     double initialdir;
+    double initialx;
+    double initialy;
 };
 
 struct _Memory {    //世界の情報を示す

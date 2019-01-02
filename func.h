@@ -18,4 +18,6 @@ void TerritoryDef(double x, double X, double Y, double alpha, double height, dou
 
 void CheckTerritory(struct _State *checkPlane, struct _State *others, int i, int *area);
 
+void ChangeWaitOrder();
+
 #endif //PROGRAM_FUNC_H
