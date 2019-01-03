@@ -5,8 +5,8 @@
 #ifndef PROGRAM_DISPLAY_H
 #define PROGRAM_DISPLAY_H
 
-#define WIDTH 2880
-#define HEIGHT 1800
+#define TEXWIDTH  256                      /* テクスチャの幅　　　 */
+#define TEXHEIGHT 256                      /* テクスチャの高さ　　 */
 
 void Init();
 

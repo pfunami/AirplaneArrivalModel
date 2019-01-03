@@ -194,11 +194,10 @@ int main(int argc, char *argv[]) {
     printState(Airplane);
     for (int i = 0; i < 5000; ++i) {
         glutDisplayFunc(display);       // 表示関数を指定
-        glutTimerFunc(100, timer, 0);
-        if (i == 800 || i == 1400) {
-            ChangeWaitOrder();
-        }
-        JudgeState();
+        glutTimerFunc(10, timer, 0);
+//        if (i == 800 || i == 1400) {
+//            ChangeWaitOrder();
+//        }
     }
     glutKeyboardFunc(keyboard);
     glutMainLoop();                 // イベント待ち

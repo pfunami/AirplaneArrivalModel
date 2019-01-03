@@ -23,4 +23,6 @@
 #define territoryHeight 304.8     //[m]
 #define maxDirection() (M_PI/180)
 
+void JudgeState();
+
 #endif //PROGRAM_MAIN_H
