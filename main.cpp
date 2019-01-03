@@ -185,6 +185,8 @@ int main(int argc, char *argv[]) {
     glutInitWindowSize(2880, 1800);  // ウィンドウサイズを指定
     glutCreateWindow(argv[0]);      // ウィンドウを作成
     glutReshapeFunc(resize);
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
+    Init();
     //-----------
     Initialize_Memory();
     Initialize_Point();
@@ -198,6 +200,7 @@ int main(int argc, char *argv[]) {
         }
         JudgeState();
     }
+    glutKeyboardFunc(keyboard);
     glutMainLoop();                 // イベント待ち
     printState(Airplane);
 
