@@ -7,7 +7,7 @@
 #include "main.h"
 #include "func.h"
 #include "struct.h"
-
+#include "display.h"
 
 struct _State Airplane[N];
 struct _Point ARRON, AWARD, ADDUM, RJTT;
@@ -179,17 +179,26 @@ void JudgeState() {
     TimePlus();
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    //opengl----
+    glutInit(&argc, argv);          // ライブラリの初期化
+    glutInitWindowSize(2880, 1800);  // ウィンドウサイズを指定
+    glutCreateWindow(argv[0]);      // ウィンドウを作成
+    glutReshapeFunc(resize);
+    //-----------
     Initialize_Memory();
     Initialize_Point();
     Initialize_Airplane();
     printState(Airplane);
     for (int i = 0; i < 5000; ++i) {
+        glutDisplayFunc(display);       // 表示関数を指定
+        glutTimerFunc(100, timer, 0);
         if (i == 800 || i == 1400) {
             ChangeWaitOrder();
         }
         JudgeState();
     }
+    glutMainLoop();                 // イベント待ち
     printState(Airplane);
 
     return 0;
