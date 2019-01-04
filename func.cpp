@@ -74,15 +74,15 @@ void ChangeWaitOrder(struct _Memory *Memory, struct _State *Airplane) {
     if (Memory->Wait_order) {
         Memory->Wait_order = 0;
         for (int i = 0; i < N; ++i) {
-            Airplane[i].phase = 0;
-            if (Airplane[i].Turning) {
-                Airplane[i].Turning = 0;
+            Airplane->phase = 0;
+            if (Airplane->Turning) {
+                Airplane->Turning = 0;
             }
         }
     } else {
         Memory->Wait_order = 1;
         for (int i = 0; i < N; ++i) {
-            Airplane[i].phase = 1;
+            Airplane->phase = 1;
         }
     }
 }

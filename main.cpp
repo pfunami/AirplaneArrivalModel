@@ -23,13 +23,16 @@ double origin;
 double straightDist = 15;
 
 void JudgeState() {
-    if (count == 10 || count == 500) {
-        printf("%d\n", count);
-        ChangeWaitOrder(&Memory, &Airplane[0]);
-    }
     count++;
+    if (count == 10 || count == 500) {
+        Memory.Wait_order = !Memory.Wait_order;
+        
+    }
     int area[6];
     for (int i = 0; i < N; ++i) {
+        if (count == 10 || count == 500) {
+            ChangeWaitOrder(&Memory, &Airplane[i]);
+        }
         if (!Airplane[i].ARRIVED) {
             dPos = Airplane[i].velocity;
             CheckTerritory(&Airplane[i], &Airplane[0], i, area);
