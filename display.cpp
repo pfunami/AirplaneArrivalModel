@@ -7,6 +7,8 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstdlib>
+#include <printf.h>
+
 #include "main.h"
 #include "func.h"
 #include "struct.h"
@@ -18,6 +20,15 @@ extern struct _Memory Memory;
 
 static GLubyte image[TEX_HEIGHT][TEX_WIDTH][4];
 
+static int Running = 0;
+
+double Trance_x(double x) {
+    return x * 200.0 / 451.9 - 100.0;
+};
+
+double Trance_y(double y) {
+    return (y - 57.65) * 200.0 / 283.6 - 90.0;
+};
 
 /*
 ** シーンの描画
@@ -30,7 +41,6 @@ static void scene(void) {
 
     /* テクスチャマッピング開始 */
     glEnable(GL_TEXTURE_2D);
-
     /* １枚の４角形を描く */
     glNormal3d(0.0, 0.0, 1.0);
     glBegin(GL_QUADS);
@@ -43,36 +53,36 @@ static void scene(void) {
     glTexCoord2d(0.0, 0.0);
     glVertex3d(-100.0, 100.0, 0.0);
     glEnd();
-
     /* テクスチャマッピング終了 */
     glDisable(GL_TEXTURE_2D);
 }
 
 
 void display(void) {
-    JudgeState();
+    if (Running) JudgeState();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(1.0, 1.0, 1.0, 1.0);
     /* モデルビュー変換行列の初期化 */
     glMatrixMode(GL_PROJECTION);//モード切替え
     glLoadIdentity();
     gluPerspective(-90, -1, 1, 500);  //「透視射影」の設定
     glTranslatef(0.0, 0.0, -100.0);
-    glEnable(GL_TEXTURE_2D);
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0, 0.0);
-    glVertex3f(-5.0, -5.0, 0.0);
-    glTexCoord2f(0.0, 1.0);
-    glVertex3f(-5.0, 5.0, 0.0);
-    glTexCoord2f(1.0, 1.0);
-    glVertex3f(5.0, 5.0, 0.0);
-    glTexCoord2f(1.0, 0.0);
-    glVertex3f(5.0, -5.0, 0.0);
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
-
     /* シーンの描画 */
     scene();
-
+    glPointSize(10);
+    glBegin(GL_POINTS);
+    glColor4f(0.7, 0.2, 0.2, 0.0);    // 点の色(RGBA)
+    glVertex2d(Trance_x(RJTT.x), Trance_y(RJTT.y));
+    glVertex2d(Trance_x(ARRON.x), Trance_y(ARRON.y));
+    glVertex2d(Trance_x(AWARD.x), Trance_y(AWARD.y));
+    glVertex2d(Trance_x(ADDUM.x), Trance_y(ADDUM.y));
+    glEnd();
+    glColor4f(1.0, 1.0, 1.0, 0.0);    // 点の色(RGBA)
+    glBegin(GL_POINTS);
+    for (int i = 0; i < N; ++i) {
+        glVertex2d(Trance_x(Airplane[i].x), Trance_y(Airplane[i].y));
+    }
+    glEnd();
     /* ダブルバッファリング */
     glutSwapBuffers();
 }
@@ -132,9 +142,10 @@ void reshape(int w, int h) {
 
 void timer(int value) {
     glutPostRedisplay();
-    glutTimerFunc(100, timer, 0);
+    glutTimerFunc(0.1, timer, 0);
 }
 
 void keyboard(unsigned char key, int x, int y) {
     if (key == 27) exit(0);//ESCキーで終了
+    if (key == '\x0D') Running = !Running;
 }

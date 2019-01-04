@@ -14,14 +14,20 @@ struct _Point ARRON, AWARD, ADDUM, RJTT;
 struct _Memory Memory;
 
 int TIME[3] = {0, 0, 16};
+int count = 0;
 
 double NewDire;
 double New_x, New_y, dPos = 0;
 double RemainingDist, RDsub, velAcce, dropAcce;
 double origin;
-double straightDist = toKm(15);
+double straightDist = 15;
 
 void JudgeState() {
+    if (count == 10 || count == 500) {
+        printf("%d\n", count);
+        ChangeWaitOrder(&Memory, &Airplane[0]);
+    }
+    count++;
     int area[6];
     for (int i = 0; i < N; ++i) {
         if (!Airplane[i].ARRIVED) {
@@ -164,7 +170,7 @@ void JudgeState() {
                     printState(Airplane);
                     Airplane[i].ARRIVED = 1;
                 } else {
-                    if (Memory.Wait_order == 1) {
+                    if (Memory.Wait_order) {
                         Airplane[i].Turning = 1;
                         Airplane[i].initialdir = Airplane[i].direction;
                     } else {
@@ -183,7 +189,7 @@ int main(int argc, char *argv[]) {
     //opengl----
     glutInit(&argc, argv);          // ライブラリの初期化
     glutInitWindowSize(2048, 1024);  // ウィンドウサイズを指定
-    glutInitDisplayMode (GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
+    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutCreateWindow(argv[0]);      // ウィンドウを作成
     glutReshapeFunc(resize);
     Init();
@@ -192,17 +198,15 @@ int main(int argc, char *argv[]) {
     Initialize_Point();
     Initialize_Airplane();
     printState(Airplane);
-    for (int i = 0; i < 5000; ++i) {
-        glutDisplayFunc(display);       // 表示関数を指定
-        glutTimerFunc(10, timer, 0);
-//        if (i == 800 || i == 1400) {
-//            ChangeWaitOrder();
-//        }
-    }
+    //opengl----
+    glutDisplayFunc(display);       // 表示関数を指定
+    glutTimerFunc(0.1, timer, 0);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
     glutMainLoop();                 // イベント待ち
-    printState(Airplane);
+    //-----------
+
+//    printState(Airplane);
 
     return 0;
 }
