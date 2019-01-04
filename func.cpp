@@ -3,6 +3,7 @@
 //
 
 #include <math.h>
+#include <cstdio>
 #include "func.h"
 #include "main.h"
 #include "struct.h"
@@ -70,19 +71,21 @@ void CheckTerritory(struct _State *checkPlane, struct _State *others, int i, int
     if (flag) { area[0] = 1; }
 }
 
-void ChangeWaitOrder(struct _Memory *Memory, struct _State *Airplane) {
-    if (Memory->Wait_order) {
-        Memory->Wait_order = 0;
-        for (int i = 0; i < N; ++i) {
-            Airplane->phase = 0;
-            if (Airplane->Turning) {
-                Airplane->Turning = 0;
-            }
-        }
+void ChangeWaitOrder(int *order, int *phase,int *turning) {
+    if (*order) {
+        *phase = 1;
+
+//        for (int i = 0; i < N; ++i) {
+//            Airplane->phase = 0;
+//            if (Airplane->Turning) {
+//                Airplane->Turning = 0;
+//            }
+//        }
     } else {
-        Memory->Wait_order = 1;
-        for (int i = 0; i < N; ++i) {
-            Airplane->phase = 1;
-        }
+        *phase = 1;
+        *turning = 0;
+//        for (int i = 0; i < N; ++i) {
+//            Airplane->phase = 1;
+//        }
     }
 }

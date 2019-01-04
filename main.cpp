@@ -26,12 +26,12 @@ void JudgeState() {
     count++;
     if (count == 10 || count == 500) {
         Memory.Wait_order = !Memory.Wait_order;
-        
     }
+    printState(Airplane);
     int area[6];
     for (int i = 0; i < N; ++i) {
         if (count == 10 || count == 500) {
-            ChangeWaitOrder(&Memory, &Airplane[i]);
+            ChangeWaitOrder(&Memory.Wait_order, &Airplane[i].phase, &Airplane[i].Turning);
         }
         if (!Airplane[i].ARRIVED) {
             dPos = Airplane[i].velocity;
@@ -173,11 +173,10 @@ void JudgeState() {
                     printState(Airplane);
                     Airplane[i].ARRIVED = 1;
                 } else {
+                    Airplane[i].nextPoint = Airplane[i].nextPoint->next;
                     if (Memory.Wait_order) {
                         Airplane[i].Turning = 1;
                         Airplane[i].initialdir = Airplane[i].direction;
-                    } else {
-                        Airplane[i].nextPoint = Airplane[i].nextPoint->next;
                     }
                 }
             }
