@@ -1,7 +1,7 @@
 #include <GLUT/glut.h>
 #include <cmath>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include <algorithm>
 #include <vector>
 #include "main.h"
@@ -19,7 +19,7 @@ double NewDire;
 double New_x, New_y, dPos = 0;
 double RemainingDist, RDsub, velAcce, dropAcce;
 double origin;
-double straight = toKm(15);
+double straightDist = toKm(15);
 
 void JudgeState() {
     int area[6];
@@ -146,7 +146,7 @@ void JudgeState() {
             Airplane[i].y += New_y;
             if (Airplane[i].Turning &&
                 sqrt(pow(Airplane[i].initialx - Airplane[i].x, 2) +
-                     pow(Airplane[i].initialy - Airplane[i].y, 2)) >= straight) {
+                     pow(Airplane[i].initialy - Airplane[i].y, 2)) >= straightDist) {
                 if (Airplane[i].phase == 2) {
                     Airplane[i].phase = 3;
                 } else if (Airplane[i].phase == 4) {
@@ -182,10 +182,10 @@ void JudgeState() {
 int main(int argc, char *argv[]) {
     //opengl----
     glutInit(&argc, argv);          // ライブラリの初期化
-    glutInitWindowSize(2880, 1800);  // ウィンドウサイズを指定
+    glutInitWindowSize(2048, 1024);  // ウィンドウサイズを指定
+    glutInitDisplayMode (GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
     glutCreateWindow(argv[0]);      // ウィンドウを作成
     glutReshapeFunc(resize);
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
     Init();
     //-----------
     Initialize_Memory();
@@ -199,6 +199,7 @@ int main(int argc, char *argv[]) {
 //            ChangeWaitOrder();
 //        }
     }
+    glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
     glutMainLoop();                 // イベント待ち
     printState(Airplane);
