@@ -7,7 +7,7 @@ set( OpenCV_FOUND 1 )
 find_package(GLUT)
 find_package(OpenGL)
 
-add_executable(Program main.cpp func.cpp func.h main.h struct.cpp struct.h display.cpp display.h)
+add_executable(Program main.cpp func.cpp func.hpp main.hpp struct.cpp struct.hpp display.cpp display.hpp)
 
 target_link_libraries(Program ${GLUT_LIBRARY})
 target_link_libraries(Program ${OPENGL_LIBRARY})

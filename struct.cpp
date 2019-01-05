@@ -2,9 +2,9 @@
 // Created on 2018/12/12.
 //
 
-#include "struct.h"
-#include "main.h"
-#include "func.h"
+#include "struct.hpp"
+#include "main.hpp"
+#include "func.hpp"
 #include <stdio.h>
 #include <math.h>
 
@@ -83,7 +83,7 @@ void Initialize_Airplane() {    //試験的に２機のみ
         Airplane[i].nextPoint = &ADDUM;
         Airplane[i].ARRIVED = 0;
         Airplane[i].Turning = 0;
-        Airplane[i].phase = 1;
+        Airplane[i].phase = 0;
         Airplane[i].initialdir = 0.0;
         Airplane[i].initialx = 0.0;
         Airplane[i].initialy = 0.0;

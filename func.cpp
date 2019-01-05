@@ -4,9 +4,9 @@
 
 #include <math.h>
 #include <cstdio>
-#include "func.h"
-#include "main.h"
-#include "struct.h"
+#include "func.hpp"
+#include "main.hpp"
+#include "struct.hpp"
 
 double toRad(double r) { return r * M_PI / 180.0; }
 

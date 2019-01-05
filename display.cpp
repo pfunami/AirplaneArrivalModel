@@ -9,10 +9,10 @@
 #include <cstdlib>
 #include <printf.h>
 
-#include "main.h"
-#include "func.h"
-#include "struct.h"
-#include "display.h"
+#include "main.hpp"
+#include "func.hpp"
+#include "struct.hpp"
+#include "display.hpp"
 
 extern struct _State Airplane[N];
 extern struct _Point ARRON, AWARD, ADDUM, RJTT;
@@ -21,13 +21,14 @@ extern struct _Memory Memory;
 static GLubyte image[TEX_HEIGHT][TEX_WIDTH][4];
 
 static int Running = 0;
+int ORDER;
 
 double Trance_x(double x) {
-    return x * 200.0 / 451.9 - 100.0;
+    return x * 1024.0 / 451.9 - 515.0;
 };
 
 double Trance_y(double y) {
-    return (y - 57.65) * 200.0 / 283.6 - 90.0;
+    return (y - 57.65) * 1024.0 / 285 - 465.0;
 };
 
 /*
@@ -45,13 +46,13 @@ static void scene(void) {
     glNormal3d(0.0, 0.0, 1.0);
     glBegin(GL_QUADS);
     glTexCoord2d(0.0, 1.0);
-    glVertex3d(-100.0, -100.0, 0.0);
+    glVertex3d(-512.0, -512.0, 0.0);
     glTexCoord2d(1.0, 1.0);
-    glVertex3d(100.0, -100.0, 0.0);
+    glVertex3d(512.0, -512.0, 0.0);
     glTexCoord2d(1.0, 0.0);
-    glVertex3d(100.0, 100.0, 0.0);
+    glVertex3d(512.0, 512.0, 0.0);
     glTexCoord2d(0.0, 0.0);
-    glVertex3d(-100.0, 100.0, 0.0);
+    glVertex3d(-512.0, 512.0, 0.0);
     glEnd();
     /* テクスチャマッピング終了 */
     glDisable(GL_TEXTURE_2D);
@@ -64,8 +65,8 @@ void display(void) {
     /* モデルビュー変換行列の初期化 */
     glMatrixMode(GL_PROJECTION);//モード切替え
     glLoadIdentity();
-    gluPerspective(-90, -1, 1, 500);  //「透視射影」の設定
-    glTranslatef(0.0, 0.0, -100.0);
+    gluPerspective(-90, -1, 1, 512);  //「透視射影」の設定
+    glTranslatef(0.0, 0.0, -512.0);
     /* シーンの描画 */
     scene();
     glPointSize(10);
@@ -148,4 +149,5 @@ void timer(int value) {
 void keyboard(unsigned char key, int x, int y) {
     if (key == 27) exit(0);//ESCキーで終了
     if (key == '\x0D') Running = !Running;
+    if (key == ' ') ORDER = !ORDER;
 }

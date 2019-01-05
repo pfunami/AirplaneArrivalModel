@@ -4,10 +4,10 @@
 #include <cstdio>
 #include <algorithm>
 #include <vector>
-#include "main.h"
-#include "func.h"
-#include "struct.h"
-#include "display.h"
+#include "main.hpp"
+#include "func.hpp"
+#include "struct.hpp"
+#include "display.hpp"
 
 struct _State Airplane[N];
 struct _Point ARRON, AWARD, ADDUM, RJTT;
@@ -15,6 +15,7 @@ struct _Memory Memory;
 
 int TIME[3] = {0, 0, 16};
 int count = 0, lastphase[N];
+extern int ORDER;
 
 double NewDire;
 double New_x, New_y, dPos = 0;
@@ -24,7 +25,8 @@ double straightDist = 15;
 
 void JudgeState() {
     count++;
-    if (count == 10 || count == 500) {
+    if (ORDER) {
+        ORDER = 0;
         Memory.Wait_order = !Memory.Wait_order;
         for (int i = 0; i < N; ++i) {
             lastphase[i] = Airplane[i].phase;
@@ -80,21 +82,21 @@ void JudgeState() {
             NewDire = atan2(Airplane[i].nextPoint->y - Airplane[i].y, Airplane[i].nextPoint->x - Airplane[i].x);
 //            if (NewDire > M_PI) NewDire = 2 * M_PI - NewDire;
             if (!Airplane[i].Turning) {
-                if (NewDire - origin <= 2 * M_PI - NewDire + origin) {
-                    Airplane[i].direction = maxDirection() < NewDire - origin ? Airplane[i].direction += maxDirection()
-                                                                              : Airplane[i].direction = NewDire;
-                } else {
-                    Airplane[i].direction =
-                            -maxDirection() > 2 * M_PI - NewDire + origin ? Airplane[i].direction -= maxDirection()
-                                                                          : Airplane[i].direction = NewDire;
-                }
-//                if (NewDire - origin > 0) {
+//                if (NewDire - origin <= 2 * M_PI - NewDire + origin) {
 //                    Airplane[i].direction = maxDirection() < NewDire - origin ? Airplane[i].direction += maxDirection()
 //                                                                              : Airplane[i].direction = NewDire;
-//                } else if (NewDire - origin < 0) {
-//                    Airplane[i].direction = -maxDirection() > NewDire - origin ? Airplane[i].direction -= maxDirection()
-//                                                                               : Airplane[i].direction = NewDire;
+//                } else {
+//                    Airplane[i].direction =
+//                            -maxDirection() > 2 * M_PI - NewDire + origin ? Airplane[i].direction -= maxDirection()
+//                                                                          : Airplane[i].direction = NewDire;
 //                }
+                if (NewDire - origin > 0) {
+                    Airplane[i].direction = maxDirection() < NewDire - origin ? Airplane[i].direction += maxDirection()
+                                                                              : Airplane[i].direction = NewDire;
+                } else if (NewDire - origin < 0) {
+                    Airplane[i].direction = -maxDirection() > NewDire - origin ? Airplane[i].direction -= maxDirection()
+                                                                               : Airplane[i].direction = NewDire;
+                }
             } else {
                 if (Airplane[i].phase == 1) {
                     if (abs(Airplane[i].direction - Airplane[i].initialdir) < M_PI) {
@@ -193,7 +195,6 @@ void JudgeState() {
                 if (!Memory.Wait_order && (lastphase[i] == 4 ||
                                            (lastphase[i] == 1 &&
                                             abs(Airplane[i].direction - Airplane[i].initialdir) < M_PI / 2))) {
-                    printf("%d\n", count);
                     Airplane[i].nextPoint = Airplane[i].nextPoint->next;
                     lastphase[i] = 0;
                 }
