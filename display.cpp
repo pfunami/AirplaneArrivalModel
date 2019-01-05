@@ -59,7 +59,6 @@ static void scene(void) {
 
 
 void display(void) {
-    if (Running) JudgeState();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(1.0, 1.0, 1.0, 1.0);
     /* モデルビュー変換行列の初期化 */
@@ -141,8 +140,9 @@ void reshape(int w, int h) {
 }
 
 void timer(int value) {
+    if (Running) JudgeState();
     glutPostRedisplay();
-    glutTimerFunc(0.1, timer, 0);
+    glutTimerFunc(1, timer, 0);
 }
 
 void keyboard(unsigned char key, int x, int y) {

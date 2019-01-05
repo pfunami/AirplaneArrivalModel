@@ -71,21 +71,11 @@ void CheckTerritory(struct _State *checkPlane, struct _State *others, int i, int
     if (flag) { area[0] = 1; }
 }
 
-void ChangeWaitOrder(int *order, int *phase,int *turning) {
+void ChangeWaitOrder(int *order, int *phase, int *turning) {
     if (*order) {
         *phase = 1;
-
-//        for (int i = 0; i < N; ++i) {
-//            Airplane->phase = 0;
-//            if (Airplane->Turning) {
-//                Airplane->Turning = 0;
-//            }
-//        }
     } else {
-        *phase = 1;
+        *phase = 0;
         *turning = 0;
-//        for (int i = 0; i < N; ++i) {
-//            Airplane->phase = 1;
-//        }
     }
 }

@@ -12,6 +12,8 @@ extern struct _State Airplane[N];
 extern struct _Point ARRON, AWARD, ADDUM, RJTT;
 extern struct _Memory Memory;
 
+extern int lastphase[N];
+
 void printState(struct _State *state) {
     for (int i = 0; i < N; ++i) {
         printf("AIRPLANE code [%d]>>>", i);
@@ -85,5 +87,6 @@ void Initialize_Airplane() {    //試験的に２機のみ
         Airplane[i].initialdir = 0.0;
         Airplane[i].initialx = 0.0;
         Airplane[i].initialy = 0.0;
+        lastphase[i] = 0;
     }
 }
