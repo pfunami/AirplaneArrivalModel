@@ -26,11 +26,18 @@ double straightDist = 15;
 void JudgeState() {
     count++;
     if (ORDER) {
-        ORDER = 0;
         Memory.Wait_order = !Memory.Wait_order;
         for (int i = 0; i < N; ++i) {
             lastphase[i] = Airplane[i].phase;
             ChangeWaitOrder(&Memory.Wait_order, &Airplane[i].phase, &Airplane[i].Turning);
+        }
+        ORDER = 0;
+    } else {
+        for (int i = 0; i < N; ++i) {
+            if (Airplane[i].phase == 4) {
+//                lastphase[i] = Airplane[i].phase;
+                ChangeWaitOrder(&Memory.Wait_order, &Airplane[i].phase, &Airplane[i].Turning);
+            }
         }
     }
     int area[6];
@@ -78,18 +85,8 @@ void JudgeState() {
 
             ///*角度の更新*///-------------------------------------------------------------------------------------------
             origin = Airplane[i].direction;
-//            if (origin > M_PI) origin = 2 * M_PI - origin;
             NewDire = atan2(Airplane[i].nextPoint->y - Airplane[i].y, Airplane[i].nextPoint->x - Airplane[i].x);
-//            if (NewDire > M_PI) NewDire = 2 * M_PI - NewDire;
             if (!Airplane[i].Turning) {
-//                if (NewDire - origin <= 2 * M_PI - NewDire + origin) {
-//                    Airplane[i].direction = maxDirection() < NewDire - origin ? Airplane[i].direction += maxDirection()
-//                                                                              : Airplane[i].direction = NewDire;
-//                } else {
-//                    Airplane[i].direction =
-//                            -maxDirection() > 2 * M_PI - NewDire + origin ? Airplane[i].direction -= maxDirection()
-//                                                                          : Airplane[i].direction = NewDire;
-//                }
                 if (NewDire - origin > 0) {
                     Airplane[i].direction = maxDirection() < NewDire - origin ? Airplane[i].direction += maxDirection()
                                                                               : Airplane[i].direction = NewDire;
@@ -177,7 +174,7 @@ void JudgeState() {
 
 
             ///*次の目標ポイントの更新*///---------------------------------------------------------------------------------
-            if (RemainingDist <= 4) {
+            if (RemainingDist <= 1) {
                 printState(Airplane);
                 if (Airplane[i].nextPoint->next == nullptr) {
                     printf("[%d] ARRIVED!\n", i);
