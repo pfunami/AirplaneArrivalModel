@@ -149,5 +149,5 @@ void timer(int value) {
 void keyboard(unsigned char key, int x, int y) {
     if (key == 27) exit(0);//ESCキーで終了
     if (key == '\x0D') Running = !Running;
-    if (key == ' ') ORDER = !ORDER;
+    if (key == ' ') ORDER = 1;
 }

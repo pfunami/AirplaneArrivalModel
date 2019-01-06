@@ -29,13 +29,13 @@ void JudgeState() {
         Memory.Wait_order = !Memory.Wait_order;
         for (int i = 0; i < N; ++i) {
             lastphase[i] = Airplane[i].phase;
-            ChangeWaitOrder(&Memory.Wait_order, &Airplane[i].phase, &Airplane[i].Turning);
+            if (Airplane[i].phase == 4 || Airplane[i].phase == 0)
+                ChangeWaitOrder(&Memory.Wait_order, &Airplane[i].phase, &Airplane[i].Turning);
         }
         ORDER = 0;
     } else {
         for (int i = 0; i < N; ++i) {
-            if (Airplane[i].phase == 4) {
-//                lastphase[i] = Airplane[i].phase;
+            if (Airplane[i].Turning && Airplane[i].phase == 4) {
                 ChangeWaitOrder(&Memory.Wait_order, &Airplane[i].phase, &Airplane[i].Turning);
             }
         }
@@ -185,17 +185,20 @@ void JudgeState() {
                         Airplane[i].Turning = 1;
                         Airplane[i].initialdir = Airplane[i].direction;
                     } else {
-                        Airplane[i].nextPoint = Airplane[i].nextPoint->next;
+                        if (Airplane[i].phase == 4 || Airplane[i].phase == 0)
+                            Airplane[i].nextPoint = Airplane[i].nextPoint->next;
                     }
                 }
-            } else {
-                if (!Memory.Wait_order && (lastphase[i] == 4 ||
-                                           (lastphase[i] == 1 &&
-                                            abs(Airplane[i].direction - Airplane[i].initialdir) < M_PI / 2))) {
-                    Airplane[i].nextPoint = Airplane[i].nextPoint->next;
-                    lastphase[i] = 0;
-                }
             }
+//            else {
+////                if (!Memory.Wait_order && (lastphase[i] == 4 ||
+////                                           (lastphase[i] == 1 &&
+////                                            abs(Airplane[i].direction - Airplane[i].initialdir) < M_PI / 2))) {
+//                if (!Memory.Wait_order && Airplane[i].Turning && Airplane[i].phase == 4) {
+//                    Airplane[i].nextPoint = Airplane[i].nextPoint->next;
+////                    lastphase[i] = 0;
+//                }
+//            }
             //----------------------------------------------------------------------------------------------------------
         }
     }
