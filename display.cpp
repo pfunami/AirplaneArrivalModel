@@ -23,13 +23,9 @@ static GLubyte image[TEX_HEIGHT][TEX_WIDTH][4];
 static int Running = 0;
 int ORDER;
 
-double Trance_x(double x) {
-    return x * 1024.0 / 451.9 - 515.0;
-};
+double Trance_x(double x) { return x * 1024.0 / 451.9 - 515.0; };
 
-double Trance_y(double y) {
-    return (y - 57.65) * 1024.0 / 285 - 465.0;
-};
+double Trance_y(double y) { return (y - 57.65) * 1024.0 / 285 - 465.0; };
 
 /*
 ** シーンの描画
