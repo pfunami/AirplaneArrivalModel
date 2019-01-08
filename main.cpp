@@ -27,18 +27,7 @@ void JudgeState() {
     count++;
     if (ORDER) {
         Memory.Wait_order = !Memory.Wait_order;
-        for (int i = 0; i < N; ++i) {
-            lastphase[i] = Airplane[i].phase;
-            if (Airplane[i].phase == 4 || Airplane[i].phase == 0)
-                ChangeWaitOrder(&Memory.Wait_order, &Airplane[i].phase, &Airplane[i].Turning);
-        }
         ORDER = 0;
-    } else {
-        for (int i = 0; i < N; ++i) {
-            if (Airplane[i].Turning && Airplane[i].phase == 4) {
-                ChangeWaitOrder(&Memory.Wait_order, &Airplane[i].phase, &Airplane[i].Turning);
-            }
-        }
     }
     int area[6];
     for (int i = 0; i < N; ++i) {
@@ -86,6 +75,7 @@ void JudgeState() {
             ///*角度の更新*///-------------------------------------------------------------------------------------------
             origin = Airplane[i].direction;
             NewDire = atan2(Airplane[i].nextPoint->y - Airplane[i].y, Airplane[i].nextPoint->x - Airplane[i].x);
+            printf("%f\n", NewDire);
             if (!Airplane[i].Turning) {
                 if (NewDire - origin > 0) {
                     Airplane[i].direction = maxDirection() < NewDire - origin ? Airplane[i].direction += maxDirection()
@@ -109,7 +99,6 @@ void JudgeState() {
                         Airplane[i].direction -= maxDirection();
                     } else {
                         Airplane[i].direction = Airplane[i].initialdir - M_PI;
-                        Airplane[i].initialdir = Airplane[i].direction;
                         Airplane[i].phase = 4;
                         Airplane[i].initialx = Airplane[i].x;
                         Airplane[i].initialy = Airplane[i].y;
@@ -166,11 +155,11 @@ void JudgeState() {
                 sqrt(pow(Airplane[i].initialx - Airplane[i].x, 2) +
                      pow(Airplane[i].initialy - Airplane[i].y, 2)) >= straightDist) {
                 if (Airplane[i].phase == 2) {
+                    Airplane[i].initialdir = Airplane[i].direction;
                     Airplane[i].phase = 3;
-                    Airplane[i].initialdir = Airplane[i].direction;
-                } else if (Airplane[i].phase == 4) {
-                    Airplane[i].phase = 1;
-                    Airplane[i].initialdir = Airplane[i].direction;
+//                } else if (Airplane[i].phase == 4) {
+//                    Airplane[i].initialdir = Airplane[i].direction;
+//                    Airplane[i].phase = 1;
                 }
             }
             //----------------------------------------------------------------------------------------------------------
@@ -184,25 +173,21 @@ void JudgeState() {
                     printState(Airplane);
                     Airplane[i].ARRIVED = 1;
                 } else {
-                    if (Memory.Wait_order) {
-                        Airplane[i].Turning = 1;
+                    if (Memory.Wait_order && !Airplane[i].Turning) {
+                        ChangeWaitOrder(&Memory.Wait_order, &Airplane[i].phase, &Airplane[i].Turning);
                         Airplane[i].initialdir = Airplane[i].direction;
-                    } else {
-                        if (Airplane[i].phase == 4 || Airplane[i].phase == 0)
-                            Airplane[i].nextPoint = Airplane[i].nextPoint->next;
+                        Airplane[i].Turning = 1;
+                    } else if (!Memory.Wait_order && Airplane[i].Turning) {
+                        Airplane[i].nextPoint = Airplane[i].nextPoint->next;
+                        ChangeWaitOrder(&Memory.Wait_order, &Airplane[i].phase, &Airplane[i].Turning);
+                    } else if (!Memory.Wait_order && !Airplane[i].Turning) {
+                        Airplane[i].nextPoint = Airplane[i].nextPoint->next;
+                    } else if (Memory.Wait_order && Airplane[i].Turning) {
+                        Airplane[i].initialdir = Airplane[i].direction;
+                        Airplane[i].phase = 1;
                     }
                 }
             }
-//            else {
-////                if (!Memory.Wait_order && (lastphase[i] == 4 ||
-////                                           (lastphase[i] == 1 &&
-////                                            abs(Airplane[i].direction - Airplane[i].initialdir) < M_PI / 2))) {
-//                if (!Memory.Wait_order && Airplane[i].Turning && Airplane[i].phase == 4) {
-//                    Airplane[i].nextPoint = Airplane[i].nextPoint->next;
-////                    lastphase[i] = 0;
-//                }
-//            }
-            //----------------------------------------------------------------------------------------------------------
         }
     }
 
@@ -215,8 +200,20 @@ int main(int argc, char *argv[]) {
     Initialize_Airplane();
     printState(Airplane);
     //opengl----
-    OpenGL_main(argc, &argv[0]);
+    glutInit(&argc, argv);          // ライブラリの初期化
+    glutInitWindowSize(2048, 1024);  // ウィンドウサイズを指定
+    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+    glutCreateWindow(argv[0]);      // ウィンドウを作成
+    glutReshapeFunc(resize);
+    Init();
+    glutDisplayFunc(display);       // 表示関数を指定
+    glutTimerFunc(1, timer, 0);
+    glutReshapeFunc(reshape);
+    glutKeyboardFunc(keyboard);
+    glutMainLoop();                 // イベント待ち
     //-----------
+
+
 
     return 0;
 }
