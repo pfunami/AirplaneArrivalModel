@@ -105,10 +105,11 @@ void JudgeState() {
                         Airplane[i].initialy = Airplane[i].y;
                     }
                 } else if (Airplane[i].phase == 3) {
-                    if (abs(Airplane[i].direction - Airplane[i].initialdir) < M_PI * 2) {
+                    if (abs(Airplane[i].direction - Airplane[i].initialdir) < M_PI) {
                         Airplane[i].direction -= maxDirection();
                     } else {
-                        Airplane[i].direction = Airplane[i].initialdir;
+                        Airplane[i].direction = Airplane[i].initialdir - M_PI;
+                        Airplane[i].initialdir = Airplane[i].direction;
                         Airplane[i].phase = 4;
                         Airplane[i].initialx = Airplane[i].x;
                         Airplane[i].initialy = Airplane[i].y;
@@ -166,8 +167,10 @@ void JudgeState() {
                      pow(Airplane[i].initialy - Airplane[i].y, 2)) >= straightDist) {
                 if (Airplane[i].phase == 2) {
                     Airplane[i].phase = 3;
+                    Airplane[i].initialdir = Airplane[i].direction;
                 } else if (Airplane[i].phase == 4) {
                     Airplane[i].phase = 1;
+                    Airplane[i].initialdir = Airplane[i].direction;
                 }
             }
             //----------------------------------------------------------------------------------------------------------
@@ -212,20 +215,8 @@ int main(int argc, char *argv[]) {
     Initialize_Airplane();
     printState(Airplane);
     //opengl----
-    glutInit(&argc, argv);          // ライブラリの初期化
-    glutInitWindowSize(2048, 1024);  // ウィンドウサイズを指定
-    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-    glutCreateWindow(argv[0]);      // ウィンドウを作成
-    glutReshapeFunc(resize);
-    Init();
-    glutDisplayFunc(display);       // 表示関数を指定
-    glutTimerFunc(1, timer, 0);
-    glutReshapeFunc(reshape);
-    glutKeyboardFunc(keyboard);
-    glutMainLoop();                 // イベント待ち
+    OpenGL_main(argc, &argv[0]);
     //-----------
-
-//    printState(Airplane);
 
     return 0;
 }

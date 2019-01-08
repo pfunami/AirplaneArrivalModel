@@ -147,3 +147,17 @@ void keyboard(unsigned char key, int x, int y) {
     if (key == '\x0D') Running = !Running;
     if (key == ' ') ORDER = 1;
 }
+
+int OpenGL_main(int argc, char *argv[]) {
+    glutInit(&argc, argv);          // ライブラリの初期化
+    glutInitWindowSize(2048, 1024);  // ウィンドウサイズを指定
+    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+    glutCreateWindow(argv[0]);      // ウィンドウを作成
+    glutReshapeFunc(resize);
+    Init();
+    glutDisplayFunc(display);       // 表示関数を指定
+    glutTimerFunc(1, timer, 0);
+    glutReshapeFunc(reshape);
+    glutKeyboardFunc(keyboard);
+    glutMainLoop();                 // イベント待ち
+}

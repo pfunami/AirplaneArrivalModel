@@ -20,4 +20,6 @@ void reshape(int w, int h);
 
 void keyboard(unsigned char key, int x, int y);
 
+int OpenGL_main(int argc, char *argv[]);
+
 #endif //PROGRAM_DISPLAY_H
