@@ -8,7 +8,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <printf.h>
-
+#include <deque>
 #include "main.hpp"
 #include "func.hpp"
 #include "struct.hpp"
@@ -19,13 +19,15 @@ extern struct _Point ARRON, AWARD, ADDUM, RJTT;
 extern struct _Memory Memory;
 
 static GLubyte image[TEX_HEIGHT][TEX_WIDTH][4];
-
 static int Running = 0;
 int ORDER;
 
-double Trance_x(double x) { return x * 1024.0 / 451.9 - 515.0; };
+std::deque<double> quex[N];
+std::deque<double> quey[N];
 
-double Trance_y(double y) { return (y - 57.65) * 1024.0 / 285 - 465.0; };
+double Trance_x(double x) { return -x * 2048.0 / 451.9 + 1024.0; };
+
+double Trance_y(double y) { return (y - 57.65) * 1024 / 285 - 465.0; };
 
 /*
 ** シーンの描画
@@ -41,27 +43,78 @@ static void scene(void) {
     /* １枚の４角形を描く */
     glNormal3d(0.0, 0.0, 1.0);
     glBegin(GL_QUADS);
-    glTexCoord2d(0.0, 1.0);
-    glVertex3d(-512.0, -512.0, 0.0);
     glTexCoord2d(1.0, 1.0);
-    glVertex3d(512.0, -512.0, 0.0);
-    glTexCoord2d(1.0, 0.0);
-    glVertex3d(512.0, 512.0, 0.0);
+    glVertex3d(-1024.0, -512.0, 0.0);
+    glTexCoord2d(0.0, 1.0);
+    glVertex3d(1024.0, -512.0, 0.0);
     glTexCoord2d(0.0, 0.0);
-    glVertex3d(-512.0, 512.0, 0.0);
+    glVertex3d(1024.0, 512.0, 0.0);
+    glTexCoord2d(1.0, 0.0);
+    glVertex3d(-1024.0, 512.0, 0.0);
     glEnd();
     /* テクスチャマッピング終了 */
     glDisable(GL_TEXTURE_2D);
 }
 
+void disp_airplane() {
+    glColor3d(1.0, 1.0, 1.0);
+    glBegin(GL_POLYGON);
+    glVertex2d(25.0, 0.0);
+    glVertex2d(22.0, 6.0);
+    glVertex2d(21.5, 14.0);
+    glVertex2d(21.5, 85.0);
+    glVertex2d(25, 91);
+    glVertex2d(28.5, 85.0);
+    glVertex2d(28.5, 14.0);
+    glVertex2d(28.0, 6.0);
+    glVertex2d(25.0, 0.0);
+    glEnd();
+
+    glBegin(GL_POLYGON);
+    glVertex2d(21.5, 30.0);
+    glVertex2d(3.0, 67.0);
+    glVertex2d(4.0, 70.0);
+    glVertex2d(21.5, 55.0);
+    glVertex2d(21.5, 30.0);
+    glEnd();
+
+    glBegin(GL_POLYGON);
+    glVertex2d(21.5, 85.0);
+    glVertex2d(14, 100);
+    glVertex2d(25, 91);
+    glVertex2d(21.5, 85.0);
+    glEnd();
+    glBegin(GL_POLYGON);
+    glVertex2d(25, 91);
+    glVertex2d(38.5, 100);
+    glVertex2d(28.5, 85.0);
+    glVertex2d(25, 91);
+    glEnd();
+
+    glBegin(GL_POLYGON);
+    glVertex2d(28.5, 55.0);
+    glVertex2d(46.0, 70.0);
+    glVertex2d(47.0, 67.0);
+    glVertex2d(28.5, 30.0);
+    glVertex2d(28.5, 55.0);
+    glEnd();
+}
 
 void display(void) {
+    //deque
+    for (int i = 0; i < N; ++i) {
+        quex[i].push_front(Airplane[i].x);
+        quey[i].push_front(Airplane[i].y);
+        if (quex[i].size() > QUEUE_SIZE) { quex[i].pop_back(); }
+        if (quey[i].size() > QUEUE_SIZE) { quey[i].pop_back(); }
+    }
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(1.0, 1.0, 1.0, 1.0);
     /* モデルビュー変換行列の初期化 */
     glMatrixMode(GL_PROJECTION);//モード切替え
     glLoadIdentity();
-    gluPerspective(-90, -1, 1, 512);  //「透視射影」の設定
+    gluPerspective(-90, 1024.0 / 512.0, 1, 512);  //「透視射影」の設定
     glTranslatef(0.0, 0.0, -512.0);
     /* シーンの描画 */
     scene();
@@ -74,11 +127,29 @@ void display(void) {
     glVertex2d(Trance_x(ADDUM.x), Trance_y(ADDUM.y));
     glEnd();
     glColor4f(1.0, 1.0, 1.0, 0.0);    // 点の色(RGBA)
-    glBegin(GL_POINTS);
+    glPushMatrix();
     for (int i = 0; i < N; ++i) {
-        glVertex2d(Trance_x(Airplane[i].x), Trance_y(Airplane[i].y));
+        glPushMatrix();
+        glTranslated(Trance_x(Airplane[i].x), Trance_y(Airplane[i].y), 0.0);
+        glRotated(-90.0 - toFreq(Airplane[i].direction), 0, 0, 1);
+        glScaled(1.0, 0.5, 0);
+        glTranslated(-25.0, -50.0, 0.0);
+        disp_airplane();
+        glPopMatrix();
     }
-    glEnd();
+    glPopMatrix();
+    glLineWidth(1.0);
+    for (int k = 0; k < N; ++k) {
+        glBegin(GL_LINE_STRIP);
+        for (int j = 0; j < quex[k].size(); ++j) {
+            glVertex2d(Trance_x(quex[k].front()), Trance_y(quey[k].front()));
+            quex[k].push_back(quex[k].front());
+            quex[k].pop_front();
+            quey[k].push_back(quey[k].front());
+            quey[k].pop_front();
+        }
+        glEnd();
+    }
     /* ダブルバッファリング */
     glutSwapBuffers();
 }
@@ -114,16 +185,13 @@ void Init() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, TEX_WIDTH, TEX_HEIGHT,
                  0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-
-//    glClearColor(1.0, 1.0, 1.0, 1.0);  // 消去色指定
-//    glClear(GL_COLOR_BUFFER_BIT);     // 画面消去
 }
 
 void resize(int w, int h) {
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(30.0, (double) w / (double) h, 1.0, 100.0);
+    gluPerspective(-90.0, (double) w / (double) h, 1.0, 512.0);
     glMatrixMode(GL_MODELVIEW);
 }
 

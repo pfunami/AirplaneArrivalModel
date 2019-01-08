@@ -7,6 +7,7 @@
 
 #define TEX_WIDTH  2048                      /* テクスチャの幅　　　 */
 #define TEX_HEIGHT 1024                      /* テクスチャの高さ　　 */
+#define QUEUE_SIZE 1000
 
 void Init();
 
