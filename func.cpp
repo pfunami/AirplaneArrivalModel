@@ -12,9 +12,9 @@ double toRad(double r) { return r * M_PI / 180.0; }
 
 double toFreq(double r) { return r * 180.0 / M_PI; }
 
-double toDot(double r) { return r * 1.4 / 60.0 / 60.0; }
+double toDot(double r) { return r * 3.6 / 60.0 / 60.0; }
 
-double toKm(double r) { return r * 60.0 * 60.0 / 1.4; }
+double toKm(double r) { return r * 60.0 * 60.0 / 3.6; }
 
 extern int TIME[3];
 

@@ -12,8 +12,11 @@
 
 
 struct _State Airplane[N];
-struct _Point ARRON, AWARD, ADDUM, RJTT;
-struct _Memory Memory;
+struct _Point ADDUM, AWARD, ARRON, RJTT;    //北風・南西からくる便
+struct _Point STONE, COLOR, CURRY, COUPE, CUTIE, CREAM, CLOAK, CAMEL, CACAO;    //北風・北東からくる便
+struct _Point BRITZ, BRASS, BACON, BIBLO, BEAST, BONDO, LOC;  //南風・南西からくる便・ADDUMから続く
+struct _Point DREAD, DENNY, DATUM, DYUKE, BONUS;  //南風・北東からくる便・STONEから続く
+extern struct _Memory Memory;
 
 int TIME[3] = {0, 0, 16};
 int count = 0, lastphase[N];

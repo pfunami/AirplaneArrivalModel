@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <printf.h>
 #include <deque>
+#include <string>
 #include "main.hpp"
 #include "func.hpp"
 #include "struct.hpp"
@@ -16,11 +17,11 @@
 
 extern struct _State Airplane[N];
 extern struct _Point ARRON, AWARD, ADDUM, RJTT;
-extern struct _Memory Memory;
+struct _Memory Memory;
 
 static GLubyte image[TEX_HEIGHT][TEX_WIDTH][4];
 static int Running = 0;
-int ORDER;
+int ORDER, changeable = 1;
 
 std::deque<double> quex[N];
 std::deque<double> quey[N];
@@ -44,13 +45,13 @@ static void scene(void) {
     glNormal3d(0.0, 0.0, 1.0);
     glBegin(GL_QUADS);
     glTexCoord2d(1.0, 1.0);
-    glVertex3d(-1024.0, -512.0, 0.0);
-    glTexCoord2d(0.0, 1.0);
     glVertex3d(1024.0, -512.0, 0.0);
+    glTexCoord2d(0.0, 1.0);
+    glVertex3d(-1024.0, -512.0, 0.0);
     glTexCoord2d(0.0, 0.0);
-    glVertex3d(1024.0, 512.0, 0.0);
-    glTexCoord2d(1.0, 0.0);
     glVertex3d(-1024.0, 512.0, 0.0);
+    glTexCoord2d(1.0, 0.0);
+    glVertex3d(1024.0, 512.0, 0.0);
     glEnd();
     /* テクスチャマッピング終了 */
     glDisable(GL_TEXTURE_2D);
@@ -100,6 +101,42 @@ void disp_airplane() {
     glEnd();
 }
 
+void DrawString(std::string str, double x0, double y0) {
+    // 平行投影にする
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    // 画面上にテキスト描画
+    glRasterPos2d(x0, y0);
+    int size = (int) str.size();
+    for (int i = 0; i < size; ++i) {
+        char ic = str[i];
+        glutBitmapCharacter(GLUT_BITMAP_9_BY_15, ic);
+    }
+
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+}
+
+void DispPoint() {
+    glPointSize(10);
+    glBegin(GL_POINTS);
+    glColor4f(0.7, 0.2, 0.2, 0.0);    // 点の色(RGBA)
+    glVertex2d(RJTT.x, RJTT.y);
+    struct _Point *point;
+    point = &ADDUM;
+    do {
+        glVertex2d(point->x, point->y);
+        point = point->next;
+    } while (point != &RJTT);
+}
+
 void display(void) {
     //deque
     for (int i = 0; i < N; ++i) {
@@ -114,17 +151,11 @@ void display(void) {
     /* モデルビュー変換行列の初期化 */
     glMatrixMode(GL_PROJECTION);//モード切替え
     glLoadIdentity();
-    gluPerspective(-90, 1024.0 / 512.0, 1, 512);  //「透視射影」の設定
+    gluPerspective(-90, -1024.0 / 512.0, 1, 512);  //「透視射影」の設定
     glTranslatef(0.0, 0.0, -512.0);
     /* シーンの描画 */
     scene();
-    glPointSize(10);
-    glBegin(GL_POINTS);
-    glColor4f(0.7, 0.2, 0.2, 0.0);    // 点の色(RGBA)
-    glVertex2d(Trance_x(RJTT.x), Trance_y(RJTT.y));
-    glVertex2d(Trance_x(ARRON.x), Trance_y(ARRON.y));
-    glVertex2d(Trance_x(AWARD.x), Trance_y(AWARD.y));
-    glVertex2d(Trance_x(ADDUM.x), Trance_y(ADDUM.y));
+    DispPoint();
     glEnd();
     glColor4f(1.0, 1.0, 1.0, 0.0);    // 点の色(RGBA)
     glPushMatrix();
@@ -150,6 +181,13 @@ void display(void) {
         }
         glEnd();
     }
+
+
+    if (Memory.Wind_direction == 1) { DrawString("WIND : NORTH", -0.98, 0.95); }
+    else { DrawString("WIND : SOUTH", -0.98, 0.95); }
+    if (Memory.Wait_order == 1) { DrawString("HOLD : ON", -0.98, 0.9); }
+    else { DrawString("HOLD : OFF", -0.98, 0.9); }
+
     /* ダブルバッファリング */
     glutSwapBuffers();
 }
@@ -212,8 +250,15 @@ void timer(int value) {
 
 void keyboard(unsigned char key, int x, int y) {
     if (key == 27) exit(0);//ESCキーで終了
-    if (key == '\x0D') Running = !Running;
+    if (key == '\x0D') {
+        Running = !Running;
+        changeable = 0;
+    }
     if (key == ' ') ORDER = 1;
+    if (changeable) {
+        if (key == 'n') Memory.Wind_direction = 1;  //北風
+        if (key == 's') Memory.Wind_direction = 0;  //南風
+    }
 }
 
 int OpenGL_main(int argc, char *argv[]) {

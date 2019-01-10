@@ -20,12 +20,8 @@ struct _State { //飛行機の状態を示す
     double height;      //高度[m]
     double direction;
 
-    int isEmergency;    //緊急事態
-
     double Delay;   //遅れ
     double Crusing_Distance;    //航続距離
-
-    int Comfort;  //快適度
 
     struct _Point *nextPoint;
     int ARRIVED;
@@ -38,8 +34,6 @@ struct _State { //飛行機の状態を示す
 };
 
 struct _Memory {    //世界の情報を示す
-    int Weather;
-    int Landable;
     int Wind_direction; //南0北1
     int Wait_order;
 };
