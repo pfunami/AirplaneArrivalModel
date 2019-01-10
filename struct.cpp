@@ -46,14 +46,14 @@ void Initialize_Point() {
 
     AWARD.x = 290;
     AWARD.y = 152;
-    AWARD.height = 3200;
-    AWARD.velocity = toDot(440.0);
+    AWARD.height = 0;
+    AWARD.velocity = 0;
     AWARD.next = &ARRON;
 
     ADDUM.x = 317;
     ADDUM.y = 199;
-    ADDUM.height = 0;//AWARDを参照
-    ADDUM.velocity = 0;//AWARDを参照
+    ADDUM.height = 3048;
+    ADDUM.velocity = toDot(425.96);
     if (Memory.Wind_direction) {
         ADDUM.next = &AWARD;
     } else {
@@ -64,7 +64,7 @@ void Initialize_Point() {
     BRITZ.y = 107;
     BRITZ.height =
     BRITZ.velocity =
-    BRITZ = &BRASS;
+    BRITZ.next = &BRASS;
 
     BRASS.x = 322;
     BRASS.y = -2;
@@ -104,38 +104,38 @@ void Initialize_Point() {
 
     STONE.x = 323;
     STONE.y = -345;
-    STONE.height
-    STONE.velocity
+    STONE.height = 3352.8;
+    STONE.velocity = toDot(463);
     STONE.next = &COLOR;
 
     COLOR.x = 309;
     COLOR.y = -262;
-    COLOR.height
-    COLOR.velocity
+    COLOR.height = 0;
+    COLOR.velocity = 0;
     COLOR.next = &CURRY;
 
     CURRY.x = 311;
     CURRY.y = -105;
-    CURRY.height
-    CURRY.velocity
+    CURRY.height = 0;
+    CURRY.velocity = 0;
     CURRY.next = &COUPE;
 
     COUPE.x = 312;
     COUPE.y = -98;
-    COUPE.height
-    COUPE.velocity
+    COUPE.height = 2438.4;
+    COUPE.velocity = 0;
     COUPE.next = &CUTIE;
 
     CUTIE.x = 320;
     CUTIE.y = -32;
-    CUTIE.height
-    CUTIE.velocity
+    CUTIE.height = 0;
+    CUTIE.velocity = 0;
     CUTIE.next = &CREAM;
 
     CREAM.x = 279;
     CREAM.y = 32;
-    CREAM.height
-    CREAM.velocity
+    CREAM.height = 0;
+    CREAM.velocity = 0;
     CREAM.next = &CLOAK;
 
     CLOAK.x = 255;
@@ -156,35 +156,35 @@ void Initialize_Point() {
     CACAO.velocity
     CACAO.next = &RJTT;
 
-    DREAD
-    DREAD
-    DREAD
-    DREAD
-    DREAD
+    DREAD.x = 241;
+    DREAD.y = -258;
+    DREAD.height
+    DREAD.velocity
+    DREAD.next = &DENNY;
 
-    DENNY
-    DENNY
-    DENNY
-    DENNY
-    DENNY
+    DENNY.x = 275;
+    DENNY.y = -185;
+    DENNY.height
+    DENNY.velocity
+    DENNY.next = &DATUM;
 
-    DATUM
-    DATUM
-    DATUM
-    DATUM
-    DATUM
+    DATUM.x = 292;
+    DATUM.y = -139;
+    DATUM.height
+    DATUM.velocity
+    DATUM.next = &DYUKE;
 
-    DYUKE
-    DYUKE
-    DYUKE
-    DYUKE
-    DYUKE
+    DYUKE.x = 295;
+    DYUKE.y = -94;
+    DYUKE.height
+    DYUKE.velocity
+    DYUKE.next = &BONUS;
 
-    BONUS
-    BONUS
-    BONUS
-    BONUS
-    BONUS
+    BONUS.x = 276;
+    BONUS.y = -84;
+    BONUS.height
+    BONUS.velocity
+    BONUS.next = &BONDO;
 };
 
 void Initialize_Memory() {

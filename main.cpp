@@ -47,17 +47,29 @@ void JudgeState() {
 
 
             ///*高度の更新*///-------------------------------------------------------------------------------------------
+            struct _Point *point;
             origin = Airplane[i].height;
             if (!Airplane[i].Turning) {
-                if (Airplane[i].nextPoint->height != 0) {
-                    dropAcce = (Airplane[i].nextPoint->height - Airplane[i].height) / RemainingDist;
-                } else {
-                    RDsub = RemainingDist + sqrt(
-                            pow(Airplane[i].nextPoint->next->x - Airplane[i].nextPoint->x, 2)
-                            + pow(Airplane[i].nextPoint->next->y - Airplane[i].nextPoint->y, 2)
-                    );
-                    dropAcce = (Airplane[i].nextPoint->next->height - Airplane[i].height) / RDsub;
+                point = Airplane[i].nextPoint;
+                RDsub = RemainingDist;
+                while (point->height == 0) {
+                    RDsub += sqrt(pow(point->x - point->next->x, 2)
+                                  + pow(point->y - point->next->y, 2));
+                    point = point->next;
                 }
+
+                dropAcce = (point->height - Airplane[i].height) / RDsub;
+
+//                if (Airplane[i].nextPoint->height != 0) {
+//                    dropAcce = (Airplane[i].nextPoint->height - Airplane[i].height) / RemainingDist;
+//                } else {
+//                    RDsub = RemainingDist + sqrt(
+//                            pow(Airplane[i].nextPoint->next->x - Airplane[i].nextPoint->x, 2)
+//                            + pow(Airplane[i].nextPoint->next->y - Airplane[i].nextPoint->y, 2)
+//                    );
+//                    dropAcce = (Airplane[i].nextPoint->next->height - Airplane[i].height) / RDsub;
+//                }
+
                 Airplane[i].height += dropAcce * dPos;
             }
             while (!area[0] && !area[5]) {
@@ -121,15 +133,25 @@ void JudgeState() {
             ///*速度の更新*///-------------------------------------------------------------------------------------------
             origin = Airplane[i].velocity;
             if (!Airplane[i].Turning) {
-                if (Airplane[i].nextPoint->velocity != 0) {
-                    velAcce = (Airplane[i].nextPoint->velocity - Airplane[i].velocity) / RemainingDist;
-                } else {
-                    RDsub = RemainingDist + sqrt(
-                            pow(Airplane[i].nextPoint->next->x - Airplane[i].nextPoint->x, 2)
-                            + pow(Airplane[i].nextPoint->next->y - Airplane[i].nextPoint->y, 2)
-                    );
-                    velAcce = (Airplane[i].nextPoint->next->velocity - Airplane[i].velocity) / RDsub;
+                point = Airplane[i].nextPoint;
+                RDsub = RemainingDist;
+                while (point->velocity == 0) {
+                    RDsub += sqrt(pow(point->x - point->next->x, 2)
+                                  + pow(point->y - point->next->y, 2));
+                    point = point->next;
                 }
+
+                velAcce = (point->velocity - Airplane[i].velocity) / RDsub;
+
+//                if (Airplane[i].nextPoint->velocity != 0) {
+//                    velAcce = (Airplane[i].nextPoint->velocity - Airplane[i].velocity) / RemainingDist;
+//                } else {
+//                    RDsub = RemainingDist + sqrt(
+//                            pow(Airplane[i].nextPoint->next->x - Airplane[i].nextPoint->x, 2)
+//                            + pow(Airplane[i].nextPoint->next->y - Airplane[i].nextPoint->y, 2)
+//                    );
+//                    velAcce = (Airplane[i].nextPoint->next->velocity - Airplane[i].velocity) / RDsub;
+//                }
                 if (velAcce * dPos < VelocityAcceMax) {
                     Airplane[i].velocity += VelocityAcceMax;
                 } else {
