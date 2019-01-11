@@ -69,8 +69,11 @@ void JudgeState() {
 //                    );
 //                    dropAcce = (Airplane[i].nextPoint->next->height - Airplane[i].height) / RDsub;
 //                }
-
-                Airplane[i].height += dropAcce * dPos;
+                if (dropAcce * dPos < DropAcceMax) {
+                    Airplane[i].height += DropAcceMax;
+                } else {
+                    Airplane[i].height += dropAcce * dPos;
+                }
             }
             while (!area[0] && !area[5]) {
                 if (area[3] || area[4]) { Airplane[i].height -= (dropAcce * dPos) / 100.0; }

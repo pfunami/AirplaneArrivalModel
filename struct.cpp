@@ -40,20 +40,20 @@ void Initialize_Point() {
 
     ARRON.x = 234;
     ARRON.y = 55;
-    ARRON.height = 1560;
-    ARRON.velocity = 0; //RJTTを参照
+    ARRON.holdv = toDot(425.96);
+    ARRON.canhold = 1;    //左1右-1できない0
     ARRON.next = &RJTT;
 
     AWARD.x = 290;
     AWARD.y = 152;
-    AWARD.height = 0;
-    AWARD.velocity = 0;
     AWARD.next = &ARRON;
 
     ADDUM.x = 317;
     ADDUM.y = 199;
     ADDUM.height = 3048;
     ADDUM.velocity = toDot(425.96);
+    ADDUM.holdv = toDot(463);
+    ADDUM.canhold = 1;
     if (Memory.Wind_direction) {
         ADDUM.next = &AWARD;
     } else {
@@ -62,128 +62,114 @@ void Initialize_Point() {
 
     BRITZ.x = 350;
     BRITZ.y = 107;
-    BRITZ.height =
-    BRITZ.velocity =
     BRITZ.next = &BRASS;
 
     BRASS.x = 322;
     BRASS.y = -2;
-    BRASS.height
-    BRASS.velocity
+    BRASS.holdv = toDot(444.48);
+    BRASS.canhold = 1;
     BRASS.next = &BACON;
 
     BACON.x = 308;
     BACON.y = -55;
-    BACON.height
-    BACON.velocity
+    BACON.height = 2133.6;
+    BACON.holdv = toDot(444.48);
+    BACON.canhold = 1;
     BACON.next = &BIBLO;
 
     BIBLO.x = 300;
     BIBLO.y = -74;
-    BIBLO.height
-    BIBLO.velocity
+    BIBLO.height = 2133.6;
     BIBLO.next = &BEAST;
 
     BEAST.x = 285;
     BEAST.y = -83;
-    BEAST.height
-    BEAST.velocity;
+    BEAST.height = 1676.4;
     BEAST.next = &BONDO;
 
     BONDO.x = 265;
     BONDO.y = -72;
-    BONDO.height
-    BONDO.velocity
+    BONDO.height = 1524;
     BONDO.next = &LOC;
 
     LOC.x = 184;
     LOC.y = -84;
-    LOC.height = 0;
-    LOC.velocity = 0;
     LOC.next = &RJTT;
 
     STONE.x = 323;
     STONE.y = -345;
     STONE.height = 3352.8;
     STONE.velocity = toDot(463);
+    STONE.holdv = toDot(463);
+    STONE.canhold = -1;
     STONE.next = &COLOR;
 
     COLOR.x = 309;
     COLOR.y = -262;
-    COLOR.height = 0;
-    COLOR.velocity = 0;
     COLOR.next = &CURRY;
 
     CURRY.x = 311;
     CURRY.y = -105;
-    CURRY.height = 0;
-    CURRY.velocity = 0;
+    CURRY.holdv = toDot(444.48);
+    CURRY.canhold = -1;
     CURRY.next = &COUPE;
 
     COUPE.x = 312;
     COUPE.y = -98;
     COUPE.height = 2438.4;
-    COUPE.velocity = 0;
     COUPE.next = &CUTIE;
 
     CUTIE.x = 320;
     CUTIE.y = -32;
-    CUTIE.height = 0;
-    CUTIE.velocity = 0;
     CUTIE.next = &CREAM;
 
     CREAM.x = 279;
     CREAM.y = 32;
-    CREAM.height = 0;
-    CREAM.velocity = 0;
+    CREAM.holdv = toDot(444.48);
+    CREAM.canhold = 1;
     CREAM.next = &CLOAK;
 
     CLOAK.x = 255;
     CLOAK.y = 46;
-    CLOAK.height
-    CLOAK.velocity
     CLOAK.next = &CAMEL;
 
     CAMEL.x = 228;
     CAMEL.y = 32;
-    CAMEL.height
-    CAMEL.velocity
     CAMEL.next = &CACAO;
 
     CACAO.x = 216;
     CACAO.y = 6;
-    CACAO.height
-    CACAO.velocity
+    CACAO.holdv = toDot(425.96);
+    CACAO.canhold = -1;
     CACAO.next = &RJTT;
 
     DREAD.x = 241;
     DREAD.y = -258;
-    DREAD.height
-    DREAD.velocity
+    DREAD.height = 2438.4;
+    DREAD.holdv = toDot(444.48);
+    DREAD.canhold = -1;
     DREAD.next = &DENNY;
 
     DENNY.x = 275;
     DENNY.y = -185;
-    DENNY.height
-    DENNY.velocity
+    DENNY.holdv = toDot(444.48);
+    DENNY.canhold = -1;
     DENNY.next = &DATUM;
 
     DATUM.x = 292;
     DATUM.y = -139;
-    DATUM.height
-    DATUM.velocity
+    DATUM.height = 1524;
     DATUM.next = &DYUKE;
 
     DYUKE.x = 295;
     DYUKE.y = -94;
-    DYUKE.height
-    DYUKE.velocity
     DYUKE.next = &BONUS;
 
     BONUS.x = 276;
     BONUS.y = -84;
-    BONUS.height
-    BONUS.velocity
+    BONUS.height = 1524;
+    BONUS.holdv = toDot(425.96);
+    BONUS.canhold = -1;
     BONUS.next = &BONDO;
 };
 
