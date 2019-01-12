@@ -25,9 +25,18 @@ struct _Memory Memory;
 static GLubyte image[TEX_HEIGHT][TEX_WIDTH][4];
 static int Running = 0;
 int ORDER, changeable = 1;
-
+extern int TIME[3];
 std::deque<double> quex[N];
 std::deque<double> quey[N];
+std::string t;
+
+int preMousePositionX;
+int preMousePositionY;
+double viewPointCenterx = 0.0;
+double viewPointCentery = 0.0;
+bool mouseLeftPressed;
+bool mouseRightPressed;
+double modelScale = -90;
 
 double Trance_x(double x) { return -x * 2048.0 / 451.9 + 1024.0; };
 
@@ -137,9 +146,6 @@ void DispPoint() {
     glColor4f(0.0, 0.7, 0.7, 0.0);    // 点の色(RGBA)
     glPointSize(5);
     glBegin(GL_POINTS);
-
-//    glVertex2d(ADDUM.x, ADDUM.y);
-//    glVertex2d(STONE.x, STONE.y);
     if (!Memory.Wind_direction) {
         glVertex2d(BONDO.x, BONDO.y);
         glVertex2d(LOC.x, LOC.y);
@@ -176,8 +182,8 @@ void display(void) {
     /* モデルビュー変換行列の初期化 */
     glMatrixMode(GL_PROJECTION);//モード切替え
     glLoadIdentity();
-    gluPerspective(-90, -1024.0 / 512.0, 1, 1000);  //「透視射影」の設定
-    gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, -500.0, 0.0, 1.0, 0.0);
+    gluPerspective(modelScale, -1024.0 / 512.0, 1, 1000);  //「透視射影」の設定
+    gluLookAt(viewPointCenterx, viewPointCentery, 0.0, viewPointCenterx, viewPointCentery, -500.0, 0.0, 1.0, 0.0);
     glTranslatef(0.0, 0.0, -512.0);
     /* シーンの描画 */
     scene();
@@ -188,7 +194,7 @@ void display(void) {
         glPushMatrix();
         glTranslated(Airplane[i].x, Airplane[i].y, 0.0);
         glRotated(90.0 + toFreq(Airplane[i].direction), 0, 0, 1);
-        glScaled(0.8, 0.4, 0);
+        glScaled(0.6, 0.3, 0);
         glTranslated(-25.0, -50.0, 0.0);
         disp_airplane();
         glPopMatrix();
@@ -212,6 +218,16 @@ void display(void) {
     else { DrawString("WIND : SOUTH", -0.98, 0.95); }
     if (Memory.Wait_order == 1) { DrawString("HOLD : ON", -0.98, 0.9); }
     else { DrawString("HOLD : OFF", -0.98, 0.9); }
+    t = "";
+    for (int l = 2; l >= 0; --l) {
+        if (TIME[l] < 10) {
+            t += "0" + std::to_string(TIME[l]);
+        } else {
+            t += std::to_string(TIME[l]);
+        }
+        if (l != 0) { t += ":"; }
+    }
+    DrawString(t, -0.98, 0.85);
 
     /* ダブルバッファリング */
     glutSwapBuffers();
@@ -267,12 +283,6 @@ void reshape(int w, int h) {
     glLoadIdentity();
 }
 
-void timer(int value) {
-    if (Running) JudgeState();
-    glutPostRedisplay();
-    glutTimerFunc(1, timer, 0);
-}
-
 void keyboard(unsigned char key, int x, int y) {
     if (key == 27) exit(0);//ESCキーで終了
     if (key == '\x0D') {
@@ -286,6 +296,58 @@ void keyboard(unsigned char key, int x, int y) {
     }
 }
 
+void mouse(int button, int state, int x, int y) {
+    mouseLeftPressed = mouseRightPressed = false;
+
+    switch (button) {
+        case GLUT_LEFT_BUTTON:
+            preMousePositionX = x;
+            preMousePositionY = y;
+            mouseLeftPressed = true;
+            break;
+        case GLUT_MIDDLE_BUTTON:
+            break;
+        case GLUT_RIGHT_BUTTON:
+            preMousePositionX = x;
+            preMousePositionY = y;
+            mouseRightPressed = true;
+            break;
+        default:
+            break;
+    }
+}
+
+
+void motion(int x, int y) {
+    int diffX = x - preMousePositionX;
+    int diffY = y - preMousePositionY;
+    double marginx = modelScale / -90 * 1024;
+    double marginy = modelScale / -90 * 512;
+
+    if (mouseLeftPressed) {
+        if (viewPointCenterx - diffX + marginx < 1024 && viewPointCenterx - diffX - marginx > -1024) {
+            viewPointCenterx -= diffX;
+        }
+        if (viewPointCentery - diffY + marginy < 512 && viewPointCentery - diffY - marginy > -512) {
+            viewPointCentery -= diffY;
+        }
+    } else if (mouseRightPressed) {
+        double scale = 1.0 + diffY * 0.01;
+        if (modelScale * scale < -15 && modelScale * scale >= -90) {
+            modelScale *= scale;
+        }
+    }
+    preMousePositionX = x;
+    preMousePositionY = y;
+    glutPostRedisplay();
+}
+
+void timer(int value) {
+    if (Running) JudgeState();
+    glutPostRedisplay();
+    glutTimerFunc(1, timer, 0);
+}
+
 int OpenGL_main(int argc, char *argv[]) {
     glutInit(&argc, argv);          // ライブラリの初期化
     glutInitWindowSize(2048, 1024);  // ウィンドウサイズを指定
@@ -297,5 +359,7 @@ int OpenGL_main(int argc, char *argv[]) {
     glutTimerFunc(1, timer, 0);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
+    glutMouseFunc(mouse);
+    glutMotionFunc(motion);
     glutMainLoop();                 // イベント待ち
 }

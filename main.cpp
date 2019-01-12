@@ -108,16 +108,16 @@ void JudgeState() {
             } else {
                 if (Airplane[i].phase == 1) {
                     if (abs(Airplane[i].direction - Airplane[i].initialdir) < M_PI) {
-                        Airplane[i].direction -= maxDirection();
+                        Airplane[i].direction -= Airplane[i].nextPoint->canhold * maxDirection();
                     } else {
-                        Airplane[i].direction = Airplane[i].initialdir - M_PI;
+                        Airplane[i].direction = Airplane[i].initialdir - Airplane[i].nextPoint->canhold * M_PI;
                         Airplane[i].phase = 2;
                         Airplane[i].initialx = Airplane[i].x;
                         Airplane[i].initialy = Airplane[i].y;
                     }
                 } else if (Airplane[i].phase == 3) {
                     if (abs(Airplane[i].direction - Airplane[i].initialdir) < 2 * M_PI) {
-                        Airplane[i].direction -= maxDirection();
+                        Airplane[i].direction -= Airplane[i].nextPoint->canhold * maxDirection();
                     } else {
                         Airplane[i].direction = Airplane[i].initialdir;
                         Airplane[i].phase = 4;
@@ -207,8 +207,12 @@ void JudgeState() {
                 } else {
                     if (Memory.Wait_order && !Airplane[i].Turning) {
                         ChangeWaitOrder(&Memory.Wait_order, &Airplane[i].phase, &Airplane[i].Turning);
-                        Airplane[i].initialdir = Airplane[i].direction;
-                        Airplane[i].Turning = 1;
+                        if (Airplane[i].nextPoint->canhold != 0) {
+                            Airplane[i].initialdir = Airplane[i].direction;
+                            Airplane[i].Turning = 1;
+                        } else {
+                            Airplane[i].nextPoint = Airplane[i].nextPoint->next;
+                        }
                     } else if (!Memory.Wait_order && Airplane[i].Turning) {
                         Airplane[i].nextPoint = Airplane[i].nextPoint->next;
                         ChangeWaitOrder(&Memory.Wait_order, &Airplane[i].phase, &Airplane[i].Turning);

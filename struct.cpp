@@ -24,7 +24,7 @@ void printState(struct _State *state) {
             printf("\tARRIVED.");
         }
         printf("\nPOSITION : (%f,%f)\tVELOCITY : %fkm/h\tHEIGHT : %fm\tDIRECTION : %fπrad\t\tCRUISINGDIST : %fkm\n",
-               state[i].x, state[i].y, toKm(state[i].velocity), state[i].height, -state[i].direction / M_PI,
+               state[i].x, state[i].y, toKm(state[i].velocity), state[i].height, (-state[i].direction + M_PI) / M_PI,
                state[i].Crusing_Distance);
     }
     printf("\n");
@@ -187,7 +187,7 @@ void Initialize_Airplane() {    //試験的に２機のみ
 
     Airplane[1].x = 160;
     Airplane[1].y = 270;
-    Airplane[1].velocity = toDot(600.0);;
+    Airplane[1].velocity = toDot(600.0);
     Airplane[1].height = 7000;
     Airplane[1].direction = atan2(ADDUM.y - Airplane[1].y,
                                   ADDUM.x - Airplane[1].x);
