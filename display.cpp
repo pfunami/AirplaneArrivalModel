@@ -28,7 +28,7 @@ int ORDER, changeable = 1;
 extern int TIME[3];
 std::deque<double> quex[N];
 std::deque<double> quey[N];
-std::string t;
+std::string t, hv;
 
 int preMousePositionX;
 int preMousePositionY;
@@ -228,6 +228,14 @@ void display(void) {
         if (l != 0) { t += ":"; }
     }
     DrawString(t, -0.98, 0.85);
+    for (int m = 0; m < N; ++m) {
+        hv = std::to_string(Airplane[m].height);
+        hv += "[m]";
+        DrawString(hv, Airplane[m].x / 1024.0 + 0.015, -Airplane[m].y / 512.0 + 0.0075);
+        hv = std::to_string(toKm(Airplane[m].velocity));
+        hv += "[km/h]";
+        DrawString(hv, Airplane[m].x / 1024.0 + 0.015, -Airplane[m].y / 512.0 + 0.05);
+    }
 
     /* ダブルバッファリング */
     glutSwapBuffers();
