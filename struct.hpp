@@ -42,6 +42,8 @@ struct _Memory {    //世界の情報を示す
 
 void printState(struct _State *state);
 
+void Change_Branch();
+
 void Initialize_Airplane();
 
 void Initialize_Memory();

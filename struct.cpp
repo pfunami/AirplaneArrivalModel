@@ -23,11 +23,16 @@ void printState(struct _State *state) {
         if (state[i].ARRIVED) {
             printf("\tARRIVED.");
         }
-        printf("\nPOSITION : (%f,%f)\tVELOCITY : %fkm/h\tHEIGHT : %fm\tDIRECTION : %fπrad\tDELAY : %fmin\tCRUISINGDIST : %fkm\n",
+        printf("\nPOSITION : (%f,%f)\tVELOCITY : %fkm/h\tHEIGHT : %fm\tDIRECTION : %fπrad\t\tCRUISINGDIST : %fkm\n",
                state[i].x, state[i].y, toKm(state[i].velocity), state[i].height, -state[i].direction / M_PI,
-               state[i].Delay, state[i].Crusing_Distance);
+               state[i].Crusing_Distance);
     }
     printf("\n");
+}
+
+void Change_Branch() {
+    if (Memory.Wind_direction) { ADDUM.next = &AWARD; } else { ADDUM.next = &BRITZ; }
+    if (Memory.Wind_direction) { STONE.next = &COLOR; } else { STONE.next = &DREAD; }
 }
 
 void Initialize_Point() {
@@ -48,17 +53,12 @@ void Initialize_Point() {
     AWARD.y = 152;
     AWARD.next = &ARRON;
 
-    ADDUM.x = 317;
-    ADDUM.y = 199;
+    ADDUM.x = 280;
+    ADDUM.y = 231;
     ADDUM.height = 3048;
     ADDUM.velocity = toDot(425.96);
     ADDUM.holdv = toDot(463);
     ADDUM.canhold = 1;
-    if (Memory.Wind_direction) {
-        ADDUM.next = &AWARD;
-    } else {
-        ADDUM.next = &BRITZ;
-    }
 
     BRITZ.x = 350;
     BRITZ.y = 107;
@@ -78,22 +78,22 @@ void Initialize_Point() {
     BACON.next = &BIBLO;
 
     BIBLO.x = 300;
-    BIBLO.y = -74;
+    BIBLO.y = -71;
     BIBLO.height = 2133.6;
     BIBLO.next = &BEAST;
 
-    BEAST.x = 285;
-    BEAST.y = -83;
+    BEAST.x = 287;
+    BEAST.y = -80;
     BEAST.height = 1676.4;
     BEAST.next = &BONDO;
 
     BONDO.x = 265;
-    BONDO.y = -72;
+    BONDO.y = -83;
     BONDO.height = 1524;
     BONDO.next = &LOC;
 
     LOC.x = 184;
-    LOC.y = -84;
+    LOC.y = -81;
     LOC.next = &RJTT;
 
     STONE.x = 323;
@@ -102,14 +102,13 @@ void Initialize_Point() {
     STONE.velocity = toDot(463);
     STONE.holdv = toDot(463);
     STONE.canhold = -1;
-    STONE.next = &COLOR;
 
     COLOR.x = 309;
     COLOR.y = -262;
     COLOR.next = &CURRY;
 
-    CURRY.x = 311;
-    CURRY.y = -105;
+    CURRY.x = 307;
+    CURRY.y = -194;
     CURRY.holdv = toDot(444.48);
     CURRY.canhold = -1;
     CURRY.next = &COUPE;

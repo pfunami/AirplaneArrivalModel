@@ -17,6 +17,9 @@
 
 extern struct _State Airplane[N];
 extern struct _Point ARRON, AWARD, ADDUM, RJTT;
+extern struct _Point STONE, COLOR, CURRY, COUPE, CUTIE, CREAM, CLOAK, CAMEL, CACAO;    //北風・北東からくる便
+extern struct _Point BRITZ, BRASS, BACON, BIBLO, BEAST, BONDO, LOC;  //南風・南西からくる便・ADDUMから続く
+extern struct _Point DREAD, DENNY, DATUM, DYUKE, BONUS;  //南風・北東からくる便・STONEから続く
 struct _Memory Memory;
 
 static GLubyte image[TEX_HEIGHT][TEX_WIDTH][4];
@@ -126,18 +129,40 @@ void DrawString(std::string str, double x0, double y0) {
 
 void DispPoint() {
     glPointSize(10);
+    glColor4f(1.0, 0.0, 0.0, 0.0);    // 点の色(RGBA)
     glBegin(GL_POINTS);
-    glColor4f(0.7, 0.2, 0.2, 0.0);    // 点の色(RGBA)
     glVertex2d(RJTT.x, RJTT.y);
+    glEnd();
+
+    glColor4f(0.0, 0.7, 0.7, 0.0);    // 点の色(RGBA)
+    glPointSize(5);
+    glBegin(GL_POINTS);
+
+//    glVertex2d(ADDUM.x, ADDUM.y);
+//    glVertex2d(STONE.x, STONE.y);
+    if (!Memory.Wind_direction) {
+        glVertex2d(BONDO.x, BONDO.y);
+        glVertex2d(LOC.x, LOC.y);
+    }
     struct _Point *point;
     point = &ADDUM;
+    glColor4f(0.2, 0.7, 0.2, 0.0);    // 点の色(RGBA)
     do {
         glVertex2d(point->x, point->y);
         point = point->next;
-    } while (point != &RJTT);
+    } while (point != &RJTT && point != &BONDO);
+
+    glColor4f(0.7, 0.7, 0.2, 0.0);    // 点の色(RGBA)
+    point = &STONE;
+    do {
+        glVertex2d(point->x, point->y);
+        point = point->next;
+    } while (point != &RJTT && point != &BONDO);
+    glEnd();
 }
 
 void display(void) {
+    Change_Branch();
     //deque
     for (int i = 0; i < N; ++i) {
         quex[i].push_front(Airplane[i].x);
@@ -151,19 +176,19 @@ void display(void) {
     /* モデルビュー変換行列の初期化 */
     glMatrixMode(GL_PROJECTION);//モード切替え
     glLoadIdentity();
-    gluPerspective(-90, -1024.0 / 512.0, 1, 512);  //「透視射影」の設定
+    gluPerspective(-90, -1024.0 / 512.0, 1, 1000);  //「透視射影」の設定
+    gluLookAt(0.0, 0.0, 0.0, 0.0, 0.0, -500.0, 0.0, 1.0, 0.0);
     glTranslatef(0.0, 0.0, -512.0);
     /* シーンの描画 */
     scene();
     DispPoint();
-    glEnd();
     glColor4f(1.0, 1.0, 1.0, 0.0);    // 点の色(RGBA)
     glPushMatrix();
     for (int i = 0; i < N; ++i) {
         glPushMatrix();
-        glTranslated(Trance_x(Airplane[i].x), Trance_y(Airplane[i].y), 0.0);
-        glRotated(-90.0 - toFreq(Airplane[i].direction), 0, 0, 1);
-        glScaled(1.0, 0.5, 0);
+        glTranslated(Airplane[i].x, Airplane[i].y, 0.0);
+        glRotated(90.0 + toFreq(Airplane[i].direction), 0, 0, 1);
+        glScaled(0.8, 0.4, 0);
         glTranslated(-25.0, -50.0, 0.0);
         disp_airplane();
         glPopMatrix();
@@ -173,7 +198,7 @@ void display(void) {
     for (int k = 0; k < N; ++k) {
         glBegin(GL_LINE_STRIP);
         for (int j = 0; j < quex[k].size(); ++j) {
-            glVertex2d(Trance_x(quex[k].front()), Trance_y(quey[k].front()));
+            glVertex2d(quex[k].front(), quey[k].front());
             quex[k].push_back(quex[k].front());
             quex[k].pop_front();
             quey[k].push_back(quey[k].front());

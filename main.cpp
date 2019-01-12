@@ -87,13 +87,23 @@ void JudgeState() {
             ///*角度の更新*///-------------------------------------------------------------------------------------------
             origin = Airplane[i].direction;
             NewDire = atan2(Airplane[i].nextPoint->y - Airplane[i].y, Airplane[i].nextPoint->x - Airplane[i].x);
+
             if (!Airplane[i].Turning) {
                 if (NewDire - origin > 0) {
-                    Airplane[i].direction = maxDirection() < NewDire - origin ? Airplane[i].direction += maxDirection()
-                                                                              : Airplane[i].direction = NewDire;
+                    if (maxDirection() < NewDire - origin && 2 * M_PI - maxDirection() > NewDire - origin) {
+                        if (NewDire - origin <= M_PI) { Airplane[i].direction += maxDirection(); }
+                        else { Airplane[i].direction -= maxDirection(); }
+                    } else {
+                        Airplane[i].direction = NewDire;
+                    }
                 } else if (NewDire - origin < 0) {
-                    Airplane[i].direction = -maxDirection() > NewDire - origin ? Airplane[i].direction -= maxDirection()
-                                                                               : Airplane[i].direction = NewDire;
+                    if (-maxDirection() > NewDire - origin && -2 * M_PI + maxDirection() < NewDire - origin) {
+                        if (NewDire - origin <= -M_PI) {
+                            Airplane[i].direction += maxDirection();
+                        } else { Airplane[i].direction -= maxDirection(); }
+                    } else {
+                        Airplane[i].direction = NewDire;
+                    }
                 }
             } else {
                 if (Airplane[i].phase == 1) {
