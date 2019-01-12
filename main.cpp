@@ -148,13 +148,21 @@ void JudgeState() {
             if (!Airplane[i].Turning) {
                 point = Airplane[i].nextPoint;
                 RDsub = RemainingDist;
-                while (point->velocity == 0) {
-                    RDsub += sqrt(pow(point->x - point->next->x, 2)
-                                  + pow(point->y - point->next->y, 2));
-                    point = point->next;
+                if (!Memory.Wait_order) {
+                    while (point->velocity == 0) {
+                        RDsub += sqrt(pow(point->x - point->next->x, 2)
+                                      + pow(point->y - point->next->y, 2));
+                        point = point->next;
+                    }
+                    velAcce = (point->velocity - Airplane[i].velocity) / RDsub;
+                } else {
+                    while (point->holdv == 0) {
+                        RDsub += sqrt(pow(point->x - point->next->x, 2)
+                                      + pow(point->y - point->next->y, 2));
+                        point = point->next;
+                    }
+                    velAcce = (point->holdv - Airplane[i].velocity) / RDsub;
                 }
-
-                velAcce = (point->velocity - Airplane[i].velocity) / RDsub;
 
 //                if (Airplane[i].nextPoint->velocity != 0) {
 //                    velAcce = (Airplane[i].nextPoint->velocity - Airplane[i].velocity) / RemainingDist;
