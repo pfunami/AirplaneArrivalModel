@@ -34,6 +34,7 @@ int preMousePositionX;
 int preMousePositionY;
 double viewPointCenterx = 0.0;
 double viewPointCentery = 0.0;
+double marginx = 1024.0, marginy = 512.0;
 bool mouseLeftPressed;
 bool mouseRightPressed;
 double modelScale = -90;
@@ -184,7 +185,7 @@ void display(void) {
     glLoadIdentity();
     gluPerspective(modelScale, -1024.0 / 512.0, 1, 1000);  //「透視射影」の設定
     gluLookAt(viewPointCenterx, viewPointCentery, 0.0, viewPointCenterx, viewPointCentery, -500.0, 0.0, 1.0, 0.0);
-    glTranslatef(0.0, 0.0, -512.0);
+    glTranslatef(0.0, 0.0, -512);
     /* シーンの描画 */
     scene();
     DispPoint();
@@ -231,10 +232,12 @@ void display(void) {
     for (int m = 0; m < N; ++m) {
         hv = std::to_string(Airplane[m].height);
         hv += "[m]";
-        DrawString(hv, Airplane[m].x / 1024.0 + 0.015, -Airplane[m].y / 512.0 + 0.0075);
+        DrawString(hv, (-Airplane[m].x + viewPointCenterx) / 1024.0 / tan(toRad(modelScale / 2.0)) + 0.015,
+                   (Airplane[m].y - viewPointCentery) / 512.0 / tan(toRad(modelScale / 2.0)) + 0.0075);
         hv = std::to_string(toKm(Airplane[m].velocity));
         hv += "[km/h]";
-        DrawString(hv, Airplane[m].x / 1024.0 + 0.015, -Airplane[m].y / 512.0 + 0.05);
+        DrawString(hv, (-Airplane[m].x + viewPointCenterx) / 1024.0 / tan(toRad(modelScale / 2.0)) + 0.015,
+                   (Airplane[m].y - viewPointCentery) / 512.0 / tan(toRad(modelScale / 2.0)) + 0.05);
     }
 
     /* ダブルバッファリング */
@@ -329,8 +332,8 @@ void mouse(int button, int state, int x, int y) {
 void motion(int x, int y) {
     int diffX = x - preMousePositionX;
     int diffY = y - preMousePositionY;
-    double marginx = modelScale / -90 * 1024;
-    double marginy = modelScale / -90 * 512;
+    marginx = modelScale / -90 * 1024;
+    marginy = modelScale / -90 * 512;
 
     if (mouseLeftPressed) {
         if (viewPointCenterx - diffX + marginx < 1024 && viewPointCenterx - diffX - marginx > -1024) {
