@@ -41,6 +41,7 @@ void Initialize_Point() {
     RJTT.y = -63;
     RJTT.height = 150;
     RJTT.velocity = toDot(265.0);
+    RJTT.holdv = RJTT.velocity; //ヌルポインタ対策
     RJTT.next = NULL;
 
     ARRON.x = 234;

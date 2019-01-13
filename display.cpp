@@ -231,10 +231,12 @@ void display(void) {
     DrawString(t, -0.98, 0.85);
     for (int m = 0; m < N; ++m) {
         hv = std::to_string(Airplane[m].height);
+        for (int i = 0; i < 4; ++i) { hv.pop_back(); }
         hv += "[m]";
         DrawString(hv, (-Airplane[m].x + viewPointCenterx) / 1024.0 / tan(toRad(modelScale / 2.0)) + 0.015,
                    (Airplane[m].y - viewPointCentery) / 512.0 / tan(toRad(modelScale / 2.0)) + 0.0075);
         hv = std::to_string(toKm(Airplane[m].velocity));
+        for (int i = 0; i < 4; ++i) { hv.pop_back(); }
         hv += "[km/h]";
         DrawString(hv, (-Airplane[m].x + viewPointCenterx) / 1024.0 / tan(toRad(modelScale / 2.0)) + 0.015,
                    (Airplane[m].y - viewPointCentery) / 512.0 / tan(toRad(modelScale / 2.0)) + 0.05);
@@ -356,7 +358,7 @@ void motion(int x, int y) {
 void timer(int value) {
     if (Running) JudgeState();
     glutPostRedisplay();
-    glutTimerFunc(1, timer, 0);
+    glutTimerFunc(10, timer, 0);
 }
 
 int OpenGL_main(int argc, char *argv[]) {
@@ -365,9 +367,10 @@ int OpenGL_main(int argc, char *argv[]) {
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutCreateWindow(argv[0]);      // ウィンドウを作成
     glutReshapeFunc(resize);
+    glutFullScreen();
     Init();
     glutDisplayFunc(display);       // 表示関数を指定
-    glutTimerFunc(1, timer, 0);
+    glutTimerFunc(10, timer, 0);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
     glutMouseFunc(mouse);
