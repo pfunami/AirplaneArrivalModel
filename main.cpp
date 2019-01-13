@@ -59,16 +59,6 @@ void JudgeState() {
                 }
 
                 dropAcce = (point->height - Airplane[i].height) / RDsub;
-
-//                if (Airplane[i].nextPoint->height != 0) {
-//                    dropAcce = (Airplane[i].nextPoint->height - Airplane[i].height) / RemainingDist;
-//                } else {
-//                    RDsub = RemainingDist + sqrt(
-//                            pow(Airplane[i].nextPoint->next->x - Airplane[i].nextPoint->x, 2)
-//                            + pow(Airplane[i].nextPoint->next->y - Airplane[i].nextPoint->y, 2)
-//                    );
-//                    dropAcce = (Airplane[i].nextPoint->next->height - Airplane[i].height) / RDsub;
-//                }
                 if (dropAcce * dPos < DropAcceMax) {
                     Airplane[i].height += DropAcceMax;
                 } else {
@@ -163,16 +153,6 @@ void JudgeState() {
                     }
                     velAcce = (point->holdv - Airplane[i].velocity) / RDsub;
                 }
-
-//                if (Airplane[i].nextPoint->velocity != 0) {
-//                    velAcce = (Airplane[i].nextPoint->velocity - Airplane[i].velocity) / RemainingDist;
-//                } else {
-//                    RDsub = RemainingDist + sqrt(
-//                            pow(Airplane[i].nextPoint->next->x - Airplane[i].nextPoint->x, 2)
-//                            + pow(Airplane[i].nextPoint->next->y - Airplane[i].nextPoint->y, 2)
-//                    );
-//                    velAcce = (Airplane[i].nextPoint->next->velocity - Airplane[i].velocity) / RDsub;
-//                }
                 if (velAcce * dPos < VelocityAcceMax) {
                     Airplane[i].velocity += VelocityAcceMax;
                 } else {
@@ -206,7 +186,7 @@ void JudgeState() {
             //----------------------------------------------------------------------------------------------------------
 
             ///*次の目標ポイントの更新*///---------------------------------------------------------------------------------
-            if (RemainingDist <= 1) {
+            if (RemainingDist <= 3) {
                 printState(Airplane);
                 if (Airplane[i].nextPoint->next == nullptr) {
                     printf("[%d] ARRIVED!\n", i);
@@ -245,7 +225,6 @@ int main(int argc, char *argv[]) {
     printState(Airplane);
     //opengl----
     OpenGL_main(argc, &argv[0]);
-    //-----------
 
     return 0;
 }
