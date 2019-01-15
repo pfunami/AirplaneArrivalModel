@@ -17,6 +17,7 @@ double toDot(double r) { return r * 3.6 / 60.0 / 60.0; }
 double toKm(double r) { return r * 60.0 * 60.0 / 3.6; }
 
 extern int TIME[3];
+double expect_d = 0.0;
 
 void TimePlus() {
     if (TIME[0] < 59) { TIME[0]++; }
@@ -49,7 +50,9 @@ void TerritoryDef(double x, double X, double Y, double alpha, double height, dou
 //前方(右上1,左上2,左下3,右下4)、後方5、存在なし0
 void CheckTerritory(struct _State *checkPlane, struct _State *others, int i, int *area) {
     for (int k = 0; k < 6; ++k) { area[k] = 0; }
-    int flag = 1;
+    int flag = 1, outcount = 0;
+    int outplane[N];
+    for (int l = 0; l < N; ++l) { outplane[l] = 0; }
     double front, behind, right, left, over, under;
     double X = checkPlane->x, Y = checkPlane->y, alpha = checkPlane->direction,
             height = checkPlane->height, v = checkPlane->velocity;
@@ -61,7 +64,8 @@ void CheckTerritory(struct _State *checkPlane, struct _State *others, int i, int
             if ((y <= front && y >= behind) && (y <= left && y >= right) && (z <= over && z >= under)) {
                 flag = 0;
                 if (y >= x * tan(alpha) + Y - X * tan(alpha)) {
-                    printf("！！！！！！！！！\n");
+                    outplane[j] = 1;
+                    outcount++;
                     if (y <= x * tan(alpha) + Y - X * tan(alpha)) {
                         if (z >= height) { area[1] = 1; } else { area[4] = 1; }
                     } else {
@@ -72,6 +76,19 @@ void CheckTerritory(struct _State *checkPlane, struct _State *others, int i, int
         }
     }
     if (flag) { area[0] = 1; }
+    if ((area[1] || area[4]) && (area[2] || area[3])) {
+        double sum = 0.0;
+        for (int j = 0; j < N; ++j) {
+            if (outplane[j]) {
+                double alpha = atan2(others[j].y - checkPlane->y, others[j].y - checkPlane->y);
+                if (abs(alpha - checkPlane->direction) > M_PI) {
+                    if (alpha >= 0) { alpha = 2 * M_PI - alpha; } else { alpha += M_PI * 2; }
+                }
+                sum += alpha;
+            }
+        }
+        expect_d = sum / (double) outcount;
+    }
 }
 
 void ChangeWaitOrder(int *order, int *phase, int *turning) {

@@ -358,7 +358,7 @@ void motion(int x, int y) {
 void timer(int value) {
     if (Running) JudgeState();
     glutPostRedisplay();
-    glutTimerFunc(10, timer, 0);
+    glutTimerFunc(1, timer, 0);
 }
 
 int OpenGL_main(int argc, char *argv[]) {
@@ -370,7 +370,7 @@ int OpenGL_main(int argc, char *argv[]) {
     glutReshapeFunc(resize);
     glutFullScreen();
     glutDisplayFunc(display);       // 表示関数を指定
-    glutTimerFunc(100, timer, 0);
+    glutTimerFunc(1, timer, 0);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
     glutMouseFunc(mouse);

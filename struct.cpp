@@ -23,7 +23,7 @@ void printState(struct _State *state, int i) {
         printf("\tARRIVED.");
     }
     printf("\nPOSITION : (%f,%f)\tVELOCITY : %fkm/h\tHEIGHT : %fm\tDIRECTION : %fπrad\t\tCRUISINGDIST : %fkm\n",
-           state->x, state->y, toKm(state->velocity), state->height, (-state->direction + M_PI) / M_PI,
+           state->x, state->y, toKm(state->velocity), state->height, (-state->direction) / M_PI,
            state->Crusing_Distance);
     printf("\n");
 }

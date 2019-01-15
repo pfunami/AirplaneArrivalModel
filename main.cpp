@@ -23,7 +23,7 @@ int count = 0, lastphase[N];
 extern int ORDER;
 
 double NewDire;
-double New_x, New_y, dPos = 0;
+double pre_x, pre_y, dPos = 0;
 double RemainingDist, RDsub, velAcce, dropAcce;
 double origin;
 double straightDist = 15;
@@ -38,7 +38,6 @@ void JudgeState() {
     for (int i = 0; i < N; ++i) {
         if (!Airplane[i].ARRIVED) {
             dPos = Airplane[i].velocity;
-            CheckTerritory(&Airplane[i], &Airplane[0], i, &area[0]);
             RemainingDist = sqrt(pow(Airplane[i].nextPoint->x - Airplane[i].x, 2) +
                                  pow(Airplane[i].nextPoint->y - Airplane[i].y, 2));
             ///*航続距離の更新*///----------------------------------------------------------------------------------------
@@ -47,8 +46,9 @@ void JudgeState() {
 
 
             ///*高度の更新*///-------------------------------------------------------------------------------------------
-            struct _Point *point;
             origin = Airplane[i].height;
+            struct _Point *point;
+            double pre_h = Airplane[i].height;
             if (!Airplane[i].Turning) {
                 point = Airplane[i].nextPoint;
                 RDsub = RemainingDist;
@@ -65,19 +65,13 @@ void JudgeState() {
                     Airplane[i].height += dropAcce * dPos;
                 }
             }
-            while (!area[0] && !area[5]) {
-                if (area[3] || area[4]) { Airplane[i].height -= (dropAcce * dPos) / 100.0; }
-                else if (area[1] || area[2]) { Airplane[i].height += (dropAcce * dPos) / 100.0; }
-                if (Airplane[i].height == origin || dropAcce < DropAcceMax) { break; }
-                CheckTerritory(&Airplane[i], &Airplane[0], i, area);
-            }
             //----------------------------------------------------------------------------------------------------------
 
 
             ///*角度の更新*///-------------------------------------------------------------------------------------------
             origin = Airplane[i].direction;
             NewDire = atan2(Airplane[i].nextPoint->y - Airplane[i].y, Airplane[i].nextPoint->x - Airplane[i].x);
-
+            double pre_d = Airplane[i].direction;
             if (!Airplane[i].Turning) {
                 if (NewDire - origin > 0) {
                     if (maxDirection() < NewDire - origin && 2 * M_PI - maxDirection() > NewDire - origin) {
@@ -116,25 +110,10 @@ void JudgeState() {
                     }
                 }
             }
-            int flag1 = 0, flag2 = 0;
-            while (!area[0] && !area[5]) {
-                if (area[1] || area[4]) {
-                    Airplane[i].direction += M_PI / 540.0;
-                    flag1 = 1;
-                } else if (area[2] || area[3]) {
-                    Airplane[i].direction -= M_PI / 540.0;
-                    flag2 = 1;
-                }
-                CheckTerritory(&Airplane[i], &Airplane[0], i, area);
-                if (abs(Airplane[i].direction - origin) > maxDirection() || (flag1 && flag2)) {
-                    Airplane[i].direction = origin;
-                    break;
-                }
-            }
             //----------------------------------------------------------------------------------------------------------
 
             ///*速度の更新*///-------------------------------------------------------------------------------------------
-            origin = Airplane[i].velocity;
+            double pre_v = Airplane[i].velocity;
             if (!Airplane[i].Turning) {
                 point = Airplane[i].nextPoint;
                 RDsub = RemainingDist;
@@ -159,28 +138,65 @@ void JudgeState() {
                     Airplane[i].velocity += velAcce * dPos;
                 }
             }
+            //----------------------------------------------------------------------------------------------------------
+
+
+            ///*座標の更新と領域チェック*///-------------------------------------------------------------------------------
+            pre_x = Airplane[i].x;
+            pre_y = Airplane[i].y;
+            Airplane[i].x += Airplane[i].velocity * cos(Airplane[i].direction);
+            Airplane[i].y += Airplane[i].velocity * sin(Airplane[i].direction);
+
+            CheckTerritory(&Airplane[i], &Airplane[0], i, area);
             while (!area[0]) {
-                if (area[1] || area[2] || area[3] || area[4]) { Airplane[i].velocity -= toDot(0.001); }
-                else if (!(area[1] || area[2] || area[3] || area[4]) && area[5]) { Airplane[i].velocity = origin; }
-                if (abs(Airplane[i].velocity - origin) > abs(VelocityAcceMax)) {
-                    Airplane[i].velocity += VelocityAcceMax;
+                if (area[5] || area[3] || area[4]) {
+                    Airplane[i].height = pre_h;
+                    break;
+                } else { Airplane[i].height -= 0.1; printf("高度調整\n");}
+                if (abs(DropAcceMax) <= abs(Airplane[i].height - pre_h)) { break; }
+                CheckTerritory(&Airplane[i], &Airplane[0], i, area);
+            }
+
+            extern double expect_d;
+            while (!area[0] && !area[5]) {
+                printf("角度調整\n");
+                if ((area[1] || area[4]) && (area[2] || area[3])) {
+                    if (abs(expect_d - pre_d) > maxDirection()) {
+                        if (expect_d > pre_d) { Airplane[i].direction = pre_d + maxDirection(); }
+                        else { Airplane[i].direction = pre_d - maxDirection(); }
+                    } else {
+                        Airplane[i].direction = expect_d;
+                        Airplane[i].x = pre_x + Airplane[i].velocity * cos(Airplane[i].direction);
+                        Airplane[i].y = pre_y + Airplane[i].velocity * sin(Airplane[i].direction);
+                        break;
+                    }
+                } else {
+                    if (area[1] || area[4]) { Airplane[i].direction -= M_PI / 540.0; }
+                    else if (area[2] || area[3]) { Airplane[i].direction += M_PI / 540.0; }
+                }
+                Airplane[i].x = pre_x + Airplane[i].velocity * cos(Airplane[i].direction);
+                Airplane[i].y = pre_y + Airplane[i].velocity * sin(Airplane[i].direction);
+                if (abs(Airplane[i].direction - pre_d) > maxDirection()) { break; }
+                CheckTerritory(&Airplane[i], &Airplane[0], i, area);
+            }
+
+            while (!area[0]) {
+                printf("速度調整\n");
+                if (!(area[1] || area[2] || area[3] || area[4]) && area[5]) {
+                    Airplane[i].velocity = pre_v;
+                    Airplane[i].x = pre_x + Airplane[i].velocity * cos(Airplane[i].direction);
+                    Airplane[i].y = pre_y + Airplane[i].velocity * sin(Airplane[i].direction);
+                    break;
+                } else { Airplane[i].velocity -= toDot(0.1); }
+                Airplane[i].x = pre_x + Airplane[i].velocity * cos(Airplane[i].direction);
+                Airplane[i].y = pre_y + Airplane[i].velocity * sin(Airplane[i].direction);
+                if (abs(Airplane[i].velocity - pre_v) < abs(VelocityAcceMax)) {
                     break;
                 }
                 CheckTerritory(&Airplane[i], &Airplane[0], i, area);
             }
-            //----------------------------------------------------------------------------------------------------------
 
 
-            ///*領域チェック*///------------------------------------------------------------------------------------------
-
-            //----------------------------------------------------------------------------------------------------------
-
-
-            ///*座標の更新*///-------------------------------------------------------------------------------------------
-            New_x = Airplane[i].velocity * cos(Airplane[i].direction);
-            New_y = Airplane[i].velocity * sin(Airplane[i].direction);
-            Airplane[i].x += New_x;
-            Airplane[i].y += New_y;
             if (Airplane[i].Turning &&
                 sqrt(pow(Airplane[i].initialx - Airplane[i].x, 2) +
                      pow(Airplane[i].initialy - Airplane[i].y, 2)) >= straightDist) {
@@ -189,6 +205,7 @@ void JudgeState() {
                 }
             }
             //----------------------------------------------------------------------------------------------------------
+
 
             ///*次の目標ポイントの更新*///---------------------------------------------------------------------------------
             if (RemainingDist <= 10) {
