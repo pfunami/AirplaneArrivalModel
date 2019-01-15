@@ -62,6 +62,10 @@ void CheckTerritory(struct _State *checkPlane, struct _State *others, int i, int
             TerritoryDef(others[j].x, X, Y, alpha, height, v, &front, &behind, &right, &left, &over, &under);
             double x = others[j].x, y = others[j].y, z = others[j].height;
             if ((y <= front && y >= behind) && (y <= left && y >= right) && (z <= over && z >= under)) {
+                if (checkPlane->Turning) {
+                    checkPlane->Turning = 0;
+                    checkPlane->phase = 0;
+                }
                 flag = 0;
                 if (y >= x * tan(alpha) + Y - X * tan(alpha)) {
                     outplane[j] = 1;

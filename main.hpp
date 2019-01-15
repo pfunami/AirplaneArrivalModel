@@ -7,12 +7,12 @@
 //1浬=2.6
 //3.6dot=1km
 
-#define N 2 //飛行機の数
+#define N 25 //飛行機の数
 
 #define VelocityAcceMax -1.3
 #define DropAcceMax -6.66    //400m毎分=8.33m/s
 #define territorySide 1.9438  //[dot]
-#define territoryFrotBehind 1000 //[s]
+#define territoryFrotBehind 15000 //[s]
 #define territoryHeight 304.8     //[m]
 #define maxDirection() (M_PI/180)
 

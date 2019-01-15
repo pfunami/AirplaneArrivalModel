@@ -13,13 +13,11 @@
 #include <sstream>
 
 extern struct _State Airplane[N];
-extern struct _Point ARRON, AWARD, ADDUM, RJTT;
+extern struct _Point ARRON, AWARD, ADDUM, RJTT, RJTTnr, RJTTnl, RJTTsr, RJTTsl;
 extern struct _Point STONE, COLOR, CURRY, COUPE, CUTIE, CREAM, CLOAK, CAMEL, CACAO;    //北風・北東からくる便
 extern struct _Point BRITZ, BRASS, BACON, BIBLO, BEAST, BONDO, LOC;  //南風・南西からくる便・ADDUMから続く
 extern struct _Point DREAD, DENNY, DATUM, DYUKE, BONUS;  //南風・北東からくる便・STONEから続く
 extern struct _Memory Memory;
-
-extern int lastphase[N];
 
 void printState(struct _State *state, int k) {
     printf("AIRPLANE code [%d]>>>\tat : ", k);
@@ -44,7 +42,20 @@ void Initialize_Point() {
     RJTT.height = 150;
     RJTT.velocity = toDot(265.0);
     RJTT.holdv = RJTT.velocity; //ヌルポインタ対策
-    RJTT.next = NULL;
+    RJTT.next = nullptr;
+
+    RJTTnl.x = 169;
+    RJTTnl.y = -56;
+    RJTTnr.x = 175;
+    RJTTnr.y = -59;
+    RJTTsl.x = 182;
+    RJTTsl.y = -57;
+    RJTTsr.x = 167;
+    RJTTsr.y = -68;
+    RJTTnl.height = RJTTnr.height = RJTTsl.height = RJTTsr.height = RJTT.height;
+    RJTTnl.velocity = RJTTnr.velocity = RJTTsl.velocity = RJTTsr.velocity = RJTT.velocity;
+    RJTTnl.holdv = RJTTnr.holdv = RJTTsl.holdv = RJTTsr.holdv = RJTT.holdv;
+    RJTTnl.next = RJTTnr.next = RJTTsl.next = RJTTsr.next = nullptr;
 
     ARRON.x = 234;
     ARRON.y = 55;
@@ -176,7 +187,7 @@ void Initialize_Point() {
 };
 
 void Initialize_Memory() {
-    Memory.Wind_direction = 0;
+    Memory.Wind_direction = 1;
     Memory.Wait_order = 0;
 }
 
@@ -188,7 +199,7 @@ void Initialize_Airplane() {
         cout << "Error! File can not be opened" << endl;
         exit(1);
     }
-    string data[N][5];
+    string data[N][8];
     string str = "";
     int i = 0, j = 0;
     // ファイルの中身を一行ずつ読み取る
@@ -210,7 +221,7 @@ void Initialize_Airplane() {
         Airplane[k].velocity = toDot(atof(data[k][2].c_str()));
         Airplane[k].height = atof(data[k][3].c_str());
         if (data[k][4] == "RJTT") { Airplane[k].nextPoint = &RJTT; }
-        else if (data[k][4] == "ARRON") { Airplane[k].nextPoint = &ARRON; }
+        else if (data[k][4] == "ARLON") { Airplane[k].nextPoint = &ARRON; }
         else if (data[k][4] == "AWARD") { Airplane[k].nextPoint = &AWARD; }
         else if (data[k][4] == "ADDUM") { Airplane[k].nextPoint = &ADDUM; }
         else if (data[k][4] == "BRITZ") { Airplane[k].nextPoint = &BRITZ; }
@@ -235,6 +246,8 @@ void Initialize_Airplane() {
         else if (data[k][4] == "DYUKE") { Airplane[k].nextPoint = &DYUKE; }
         else if (data[k][4] == "BONUS") { Airplane[k].nextPoint = &BONUS; }
         else { exit(1); }
+        Airplane[k].callsign = data[k][5];
+        Airplane[k].from = data[k][6];
         Airplane[k].direction = atan2(Airplane[k].nextPoint->y - Airplane[k].y,
                                       Airplane[k].nextPoint->x - Airplane[k].x);
         Airplane[k].Crusing_Distance = 0;

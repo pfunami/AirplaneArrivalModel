@@ -22,4 +22,4 @@ void CheckTerritory(struct _State *checkPlane, struct _State *others, int i, int
 
 void ChangeWaitOrder(int *order, int *phase, int *turning);
 
-#endif //PROGRAM_FUNC_H
+#endif

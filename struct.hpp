@@ -5,6 +5,8 @@
 #ifndef PROGRAM_STRUCT_H
 #define PROGRAM_STRUCT_H
 
+#include <string>
+
 struct _Point { //エンルートチャート上の各ポイントに相当
     double x;
     double y;
@@ -22,7 +24,6 @@ struct _State { //飛行機の状態を示す
     double height;      //高度[m]
     double direction;
 
-    double Delay;   //遅れ
     double Crusing_Distance;    //航続距離
 
     struct _Point *nextPoint;
@@ -33,6 +34,8 @@ struct _State { //飛行機の状態を示す
     double initialdir;
     double initialx;
     double initialy;
+    std::string callsign;
+    std::string from;
 };
 
 struct _Memory {    //世界の情報を示す

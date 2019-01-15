@@ -12,14 +12,14 @@
 
 
 struct _State Airplane[N];
-struct _Point ADDUM, AWARD, ARRON, RJTT;    //北風・南西からくる便
+struct struct _Point ARRON, AWARD, ADDUM, RJTT, RJTTnr, RJTTnl, RJTTsr, RJTTsl;    //北風・南西からくる便
 struct _Point STONE, COLOR, CURRY, COUPE, CUTIE, CREAM, CLOAK, CAMEL, CACAO;    //北風・北東からくる便
 struct _Point BRITZ, BRASS, BACON, BIBLO, BEAST, BONDO, LOC;  //南風・南西からくる便・ADDUMから続く
 struct _Point DREAD, DENNY, DATUM, DYUKE, BONUS;  //南風・北東からくる便・STONEから続く
 extern struct _Memory Memory;
 
-int TIME[3] = {0, 0, 16};
-int count = 0, lastphase[N];
+int TIME[3] = {0, 21, 17};
+int count = 0;
 extern int ORDER;
 
 double NewDire;
@@ -149,6 +149,21 @@ void JudgeState() {
 
             CheckTerritory(&Airplane[i], &Airplane[0], i, area);
             while (!area[0]) {
+                printf("速度調整\n");
+                if (!(area[1] || area[2] || area[3] || area[4]) && area[5]) {
+                    Airplane[i].velocity = pre_v;
+                    Airplane[i].x = pre_x + Airplane[i].velocity * cos(Airplane[i].direction);
+                    Airplane[i].y = pre_y + Airplane[i].velocity * sin(Airplane[i].direction);
+                    break;
+                } else { Airplane[i].velocity -= toDot(0.1); }
+                Airplane[i].x = pre_x + Airplane[i].velocity * cos(Airplane[i].direction);
+                Airplane[i].y = pre_y + Airplane[i].velocity * sin(Airplane[i].direction);
+                if (abs(Airplane[i].velocity - pre_v) < abs(VelocityAcceMax)) {
+                    break;
+                }
+                CheckTerritory(&Airplane[i], &Airplane[0], i, area);
+            }
+            while (!area[0]) {
                 if (area[5] || area[3] || area[4]) {
                     Airplane[i].height = pre_h;
                     break;
@@ -177,22 +192,6 @@ void JudgeState() {
                 Airplane[i].x = pre_x + Airplane[i].velocity * cos(Airplane[i].direction);
                 Airplane[i].y = pre_y + Airplane[i].velocity * sin(Airplane[i].direction);
                 if (abs(Airplane[i].direction - pre_d) > maxDirection()) { break; }
-                CheckTerritory(&Airplane[i], &Airplane[0], i, area);
-            }
-
-            while (!area[0]) {
-                printf("速度調整\n");
-                if (!(area[1] || area[2] || area[3] || area[4]) && area[5]) {
-                    Airplane[i].velocity = pre_v;
-                    Airplane[i].x = pre_x + Airplane[i].velocity * cos(Airplane[i].direction);
-                    Airplane[i].y = pre_y + Airplane[i].velocity * sin(Airplane[i].direction);
-                    break;
-                } else { Airplane[i].velocity -= toDot(0.1); }
-                Airplane[i].x = pre_x + Airplane[i].velocity * cos(Airplane[i].direction);
-                Airplane[i].y = pre_y + Airplane[i].velocity * sin(Airplane[i].direction);
-                if (abs(Airplane[i].velocity - pre_v) < abs(VelocityAcceMax)) {
-                    break;
-                }
                 CheckTerritory(&Airplane[i], &Airplane[0], i, area);
             }
 

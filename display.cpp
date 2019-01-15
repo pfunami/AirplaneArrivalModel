@@ -16,7 +16,7 @@
 #include "display.hpp"
 
 extern struct _State Airplane[N];
-extern struct _Point ARRON, AWARD, ADDUM, RJTT;
+extern struct _Point ARRON, AWARD, ADDUM, RJTT, RJTTnr, RJTTnl, RJTTsr, RJTTsl;
 extern struct _Point STONE, COLOR, CURRY, COUPE, CUTIE, CREAM, CLOAK, CAMEL, CACAO;    //北風・北東からくる便
 extern struct _Point BRITZ, BRASS, BACON, BIBLO, BEAST, BONDO, LOC;  //南風・南西からくる便・ADDUMから続く
 extern struct _Point DREAD, DENNY, DATUM, DYUKE, BONUS;  //南風・北東からくる便・STONEから続く
@@ -128,7 +128,7 @@ void DrawString(std::string str, double x0, double y0) {
     int size = (int) str.size();
     for (int i = 0; i < size; ++i) {
         char ic = str[i];
-        glutBitmapCharacter(GLUT_BITMAP_9_BY_15, ic);
+        glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ic);
     }
 
     glPopMatrix();
@@ -229,18 +229,23 @@ void display(void) {
         if (l != 0) { t += ":"; }
     }
     DrawString(t, -0.98, 0.85);
+    glColor4f(1.0, 0.0, 0.0, 0.0);    // 点の色(RGBA)
     for (int m = 0; m < N; ++m) {
+        DrawString(Airplane[m].callsign + " from " + Airplane[m].from,
+                   (-Airplane[m].x + viewPointCenterx) / 1024.0 / tan(toRad(modelScale / 2.0)) + 0.005,
+                   (Airplane[m].y - viewPointCentery) / 512.0 / tan(toRad(modelScale / 2.0)) + 0.0675);
         hv = std::to_string(Airplane[m].height);
         for (int i = 0; i < 4; ++i) { hv.pop_back(); }
         hv += "[m]";
-        DrawString(hv, (-Airplane[m].x + viewPointCenterx) / 1024.0 / tan(toRad(modelScale / 2.0)) + 0.015,
+        DrawString(hv, (-Airplane[m].x + viewPointCenterx) / 1024.0 / tan(toRad(modelScale / 2.0)) + 0.02,
                    (Airplane[m].y - viewPointCentery) / 512.0 / tan(toRad(modelScale / 2.0)) + 0.0075);
         hv = std::to_string(toKm(Airplane[m].velocity));
         for (int i = 0; i < 4; ++i) { hv.pop_back(); }
         hv += "[km/h]";
-        DrawString(hv, (-Airplane[m].x + viewPointCenterx) / 1024.0 / tan(toRad(modelScale / 2.0)) + 0.015,
-                   (Airplane[m].y - viewPointCentery) / 512.0 / tan(toRad(modelScale / 2.0)) + 0.05);
+        DrawString(hv, (-Airplane[m].x + viewPointCenterx) / 1024.0 / tan(toRad(modelScale / 2.0)) + 0.02,
+                   (Airplane[m].y - viewPointCentery) / 512.0 / tan(toRad(modelScale / 2.0)) + 0.0375);
     }
+    glColor4f(1.0, 1.0, 1.0, 0.0);    // 点の色(RGBA)
 
     /* ダブルバッファリング */
     glutSwapBuffers();
