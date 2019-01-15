@@ -366,11 +366,11 @@ int OpenGL_main(int argc, char *argv[]) {
     glutInitWindowSize(2048, 1024);  // ウィンドウサイズを指定
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutCreateWindow(argv[0]);      // ウィンドウを作成
+    Init();
     glutReshapeFunc(resize);
     glutFullScreen();
-    Init();
     glutDisplayFunc(display);       // 表示関数を指定
-    glutTimerFunc(10, timer, 0);
+    glutTimerFunc(100, timer, 0);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
     glutMouseFunc(mouse);

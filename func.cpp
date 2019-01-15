@@ -61,6 +61,7 @@ void CheckTerritory(struct _State *checkPlane, struct _State *others, int i, int
             if ((y <= front && y >= behind) && (y <= left && y >= right) && (z <= over && z >= under)) {
                 flag = 0;
                 if (y >= x * tan(alpha) + Y - X * tan(alpha)) {
+                    printf("！！！！！！！！！\n");
                     if (y <= x * tan(alpha) + Y - X * tan(alpha)) {
                         if (z >= height) { area[1] = 1; } else { area[4] = 1; }
                     } else {

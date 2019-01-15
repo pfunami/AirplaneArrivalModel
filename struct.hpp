@@ -40,7 +40,7 @@ struct _Memory {    //世界の情報を示す
     int Wait_order;
 };
 
-void printState(struct _State *state);
+void printState(struct _State *state, int i);
 
 void Change_Branch();
 

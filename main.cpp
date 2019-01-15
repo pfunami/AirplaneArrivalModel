@@ -171,6 +171,11 @@ void JudgeState() {
             //----------------------------------------------------------------------------------------------------------
 
 
+            ///*領域チェック*///------------------------------------------------------------------------------------------
+
+            //----------------------------------------------------------------------------------------------------------
+
+
             ///*座標の更新*///-------------------------------------------------------------------------------------------
             New_x = Airplane[i].velocity * cos(Airplane[i].direction);
             New_y = Airplane[i].velocity * sin(Airplane[i].direction);
@@ -186,11 +191,11 @@ void JudgeState() {
             //----------------------------------------------------------------------------------------------------------
 
             ///*次の目標ポイントの更新*///---------------------------------------------------------------------------------
-            if (RemainingDist <= 3) {
-                printState(Airplane);
+            if (RemainingDist <= 10) {
+                printState(&Airplane[i], i);
                 if (Airplane[i].nextPoint->next == nullptr) {
                     printf("[%d] ARRIVED!\n", i);
-                    printState(Airplane);
+                    printState(&Airplane[i], i);
                     Airplane[i].ARRIVED = 1;
                 } else {
                     if (Memory.Wait_order && !Airplane[i].Turning) {
@@ -222,8 +227,10 @@ int main(int argc, char *argv[]) {
     Initialize_Memory();
     Initialize_Point();
     Initialize_Airplane();
-    printState(Airplane);
     //opengl----
+//    for (int i = 0; i < 100000; ++i) {
+//        JudgeState();
+//    }
     OpenGL_main(argc, &argv[0]);
 
     return 0;

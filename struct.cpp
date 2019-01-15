@@ -17,16 +17,14 @@ extern struct _Memory Memory;
 
 extern int lastphase[N];
 
-void printState(struct _State *state) {
-    for (int i = 0; i < N; ++i) {
-        printf("AIRPLANE code [%d]>>>", i);
-        if (state[i].ARRIVED) {
-            printf("\tARRIVED.");
-        }
-        printf("\nPOSITION : (%f,%f)\tVELOCITY : %fkm/h\tHEIGHT : %fm\tDIRECTION : %fπrad\t\tCRUISINGDIST : %fkm\n",
-               state[i].x, state[i].y, toKm(state[i].velocity), state[i].height, (-state[i].direction + M_PI) / M_PI,
-               state[i].Crusing_Distance);
+void printState(struct _State *state, int i) {
+    printf("AIRPLANE code [%d]>>>\tat : ", i);
+    if (state->ARRIVED) {
+        printf("\tARRIVED.");
     }
+    printf("\nPOSITION : (%f,%f)\tVELOCITY : %fkm/h\tHEIGHT : %fm\tDIRECTION : %fπrad\t\tCRUISINGDIST : %fkm\n",
+           state->x, state->y, toKm(state->velocity), state->height, (-state->direction + M_PI) / M_PI,
+           state->Crusing_Distance);
     printf("\n");
 }
 
@@ -195,7 +193,7 @@ void Initialize_Airplane() {    //試験的に２機のみ
     for (int i = 0; i < N; ++i) {
         Airplane[i].Delay = 0;
         Airplane[i].Crusing_Distance = 0;
-        Airplane[i].nextPoint = &ADDUM;
+        Airplane[i].nextPoint = &STONE;
         Airplane[i].ARRIVED = 0;
         Airplane[i].Turning = 0;
         Airplane[i].phase = 0;
