@@ -5,8 +5,12 @@
 #include "struct.hpp"
 #include "main.hpp"
 #include "func.hpp"
-#include <stdio.h>
-#include <math.h>
+#include <cstdio>
+#include <cmath>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
 
 extern struct _State Airplane[N];
 extern struct _Point ARRON, AWARD, ADDUM, RJTT;
@@ -17,8 +21,8 @@ extern struct _Memory Memory;
 
 extern int lastphase[N];
 
-void printState(struct _State *state, int i) {
-    printf("AIRPLANE code [%d]>>>\tat : ", i);
+void printState(struct _State *state, int k) {
+    printf("AIRPLANE code [%d]>>>\tat : ", k);
     if (state->ARRIVED) {
         printf("\tARRIVED.");
     }
@@ -176,30 +180,69 @@ void Initialize_Memory() {
     Memory.Wait_order = 0;
 }
 
-void Initialize_Airplane() {    //試験的に２機のみ
-    Airplane[0].x = 200;
-    Airplane[0].y = 242;
-    Airplane[0].velocity = toDot(600.0);
-    Airplane[0].height = 5000;
-    Airplane[0].direction = atan2(ADDUM.y - Airplane[0].y,
-                                  ADDUM.x - Airplane[0].x);
-
-    Airplane[1].x = 160;
-    Airplane[1].y = 270;
-    Airplane[1].velocity = toDot(600.0);
-    Airplane[1].height = 7000;
-    Airplane[1].direction = atan2(ADDUM.y - Airplane[1].y,
-                                  ADDUM.x - Airplane[1].x);
-    for (int i = 0; i < N; ++i) {
-        Airplane[i].Delay = 0;
-        Airplane[i].Crusing_Distance = 0;
-        Airplane[i].nextPoint = &STONE;
-        Airplane[i].ARRIVED = 0;
-        Airplane[i].Turning = 0;
-        Airplane[i].phase = 0;
-        Airplane[i].initialdir = 0.0;
-        Airplane[i].initialx = 0.0;
-        Airplane[i].initialy = 0.0;
-        lastphase[i] = 0;
+void Initialize_Airplane() {
+    using namespace std;
+    //csvから航空機情報を読み込み
+    ifstream ifs("data.csv");
+    if (!ifs) {
+        cout << "Error! File can not be opened" << endl;
+        exit(1);
+    }
+    string data[N][5];
+    string str = "";
+    int i = 0, j = 0;
+    // ファイルの中身を一行ずつ読み取る
+    while (getline(ifs, str)) {
+        string tmp = "";
+        istringstream stream(str);
+        // 区切り文字がなくなるまで文字を区切っていく
+        while (getline(stream, tmp, ',')) {
+            // 区切られた文字がtmpに入る
+            data[i][j] = tmp;
+            j++;
+        }
+        j = 0;
+        i++;
+    }
+    for (int k = 0; k < N; ++k) {
+        Airplane[k].x = atof(data[k][0].c_str());
+        Airplane[k].y = atof(data[k][1].c_str());
+        Airplane[k].velocity = toDot(atof(data[k][2].c_str()));
+        Airplane[k].height = atof(data[k][3].c_str());
+        if (data[k][4] == "RJTT") { Airplane[k].nextPoint = &RJTT; }
+        else if (data[k][4] == "ARRON") { Airplane[k].nextPoint = &ARRON; }
+        else if (data[k][4] == "AWARD") { Airplane[k].nextPoint = &AWARD; }
+        else if (data[k][4] == "ADDUM") { Airplane[k].nextPoint = &ADDUM; }
+        else if (data[k][4] == "BRITZ") { Airplane[k].nextPoint = &BRITZ; }
+        else if (data[k][4] == "BRASS") { Airplane[k].nextPoint = &BRASS; }
+        else if (data[k][4] == "BACON") { Airplane[k].nextPoint = &BACON; }
+        else if (data[k][4] == "BIBLO") { Airplane[k].nextPoint = &BIBLO; }
+        else if (data[k][4] == "BEAST") { Airplane[k].nextPoint = &BEAST; }
+        else if (data[k][4] == "BONDO") { Airplane[k].nextPoint = &BONDO; }
+        else if (data[k][4] == "LOC") { Airplane[k].nextPoint = &LOC; }
+        else if (data[k][4] == "STONE") { Airplane[k].nextPoint = &STONE; }
+        else if (data[k][4] == "COLOR") { Airplane[k].nextPoint = &COLOR; }
+        else if (data[k][4] == "CURRY") { Airplane[k].nextPoint = &CURRY; }
+        else if (data[k][4] == "COUPE") { Airplane[k].nextPoint = &COUPE; }
+        else if (data[k][4] == "CUTIE") { Airplane[k].nextPoint = &CUTIE; }
+        else if (data[k][4] == "CREAM") { Airplane[k].nextPoint = &CREAM; }
+        else if (data[k][4] == "CLOAK") { Airplane[k].nextPoint = &CLOAK; }
+        else if (data[k][4] == "CAMEL") { Airplane[k].nextPoint = &CAMEL; }
+        else if (data[k][4] == "CACAO") { Airplane[k].nextPoint = &CACAO; }
+        else if (data[k][4] == "DREAD") { Airplane[k].nextPoint = &DREAD; }
+        else if (data[k][4] == "DENNY") { Airplane[k].nextPoint = &DENNY; }
+        else if (data[k][4] == "DATUM") { Airplane[k].nextPoint = &DATUM; }
+        else if (data[k][4] == "DYUKE") { Airplane[k].nextPoint = &DYUKE; }
+        else if (data[k][4] == "BONUS") { Airplane[k].nextPoint = &BONUS; }
+        else { exit(1); }
+        Airplane[k].direction = atan2(Airplane[k].nextPoint->y - Airplane[k].y,
+                                      Airplane[k].nextPoint->x - Airplane[k].x);
+        Airplane[k].Crusing_Distance = 0;
+        Airplane[k].ARRIVED = 0;
+        Airplane[k].Turning = 0;
+        Airplane[k].phase = 0;
+        Airplane[k].initialdir = 0.0;
+        Airplane[k].initialx = 0.0;
+        Airplane[k].initialy = 0.0;
     }
 }
