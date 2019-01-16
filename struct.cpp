@@ -15,12 +15,12 @@
 extern struct _State Airplane[N];
 extern struct _Point ARRON, AWARD, ADDUM, RJTT, RJTTnr, RJTTnl, RJTTsr, RJTTsl;
 extern struct _Point STONE, COLOR, CURRY, COUPE, CUTIE, CREAM, CLOAK, CAMEL, CACAO;    //北風・北東からくる便
-extern struct _Point BRITZ, BRASS, BACON, BIBLO, BEAST, BONDO, LOC;  //南風・南西からくる便・ADDUMから続く
+extern struct _Point BLITZ, BRASS, BACON, BIBLO, BEAST, BONDO, LOC;  //南風・南西からくる便・ADDUMから続く
 extern struct _Point DREAD, DENNY, DATUM, DYUKE, BONUS;  //南風・北東からくる便・STONEから続く
 extern struct _Memory Memory;
 
 void printState(struct _State *state, int k) {
-    printf("AIRPLANE code [%d]>>>\tat : ", k);
+    printf("AIRPLANE code [%d]>>>", k);
     if (state->ARRIVED) {
         printf("\tARRIVED.");
     }
@@ -31,7 +31,7 @@ void printState(struct _State *state, int k) {
 }
 
 void Change_Branch() {
-    if (Memory.Wind_direction) { ADDUM.next = &AWARD; } else { ADDUM.next = &BRITZ; }
+    if (Memory.Wind_direction) { ADDUM.next = &AWARD; } else { ADDUM.next = &BLITZ; }
     if (Memory.Wind_direction) { STONE.next = &COLOR; } else { STONE.next = &DREAD; }
 }
 
@@ -74,9 +74,9 @@ void Initialize_Point() {
     ADDUM.holdv = toDot(463);
     ADDUM.canhold = 1;
 
-    BRITZ.x = 350;
-    BRITZ.y = 107;
-    BRITZ.next = &BRASS;
+    BLITZ.x = 350;
+    BLITZ.y = 107;
+    BLITZ.next = &BRASS;
 
     BRASS.x = 322;
     BRASS.y = -2;
@@ -194,7 +194,7 @@ void Initialize_Memory() {
 void Initialize_Airplane() {
     using namespace std;
     //csvから航空機情報を読み込み
-    ifstream ifs("data.csv");
+    ifstream ifs("data2.csv");
     if (!ifs) {
         cout << "Error! File can not be opened" << endl;
         exit(1);
@@ -224,7 +224,7 @@ void Initialize_Airplane() {
         else if (data[k][4] == "ARLON") { Airplane[k].nextPoint = &ARRON; }
         else if (data[k][4] == "AWARD") { Airplane[k].nextPoint = &AWARD; }
         else if (data[k][4] == "ADDUM") { Airplane[k].nextPoint = &ADDUM; }
-        else if (data[k][4] == "BRITZ") { Airplane[k].nextPoint = &BRITZ; }
+        else if (data[k][4] == "BLITZ") { Airplane[k].nextPoint = &BLITZ; }
         else if (data[k][4] == "BRASS") { Airplane[k].nextPoint = &BRASS; }
         else if (data[k][4] == "BACON") { Airplane[k].nextPoint = &BACON; }
         else if (data[k][4] == "BIBLO") { Airplane[k].nextPoint = &BIBLO; }
@@ -245,7 +245,10 @@ void Initialize_Airplane() {
         else if (data[k][4] == "DATUM") { Airplane[k].nextPoint = &DATUM; }
         else if (data[k][4] == "DYUKE") { Airplane[k].nextPoint = &DYUKE; }
         else if (data[k][4] == "BONUS") { Airplane[k].nextPoint = &BONUS; }
-        else { exit(1); }
+        else {
+            printf("%d???\n", k);
+            exit(1);
+        }
         Airplane[k].callsign = data[k][5];
         Airplane[k].from = data[k][6];
         Airplane[k].direction = atan2(Airplane[k].nextPoint->y - Airplane[k].y,

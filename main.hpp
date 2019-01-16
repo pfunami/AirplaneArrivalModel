@@ -11,7 +11,7 @@
 
 #define VelocityAcceMax -1.3
 #define DropAcceMax -6.66    //400m毎分=8.33m/s
-#define territorySide 1.9438  //[dot]
+#define territorySide 2.9438  //[dot]
 #define territoryFrotBehind 15000 //[s]
 #define territoryHeight 304.8     //[m]
 #define maxDirection() (M_PI/180)

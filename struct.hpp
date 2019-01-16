@@ -7,13 +7,14 @@
 
 #include <string>
 
-struct _Point { //エンルートチャート上の各ポイントに相当
+struct _Point { //チャート上の各ポイントに相当
     double x;
     double y;
     double height = 0;
     double velocity = 0;
     double holdv = 0;
     double canhold = 0;
+    int size = 0;
     _Point *next;
 };
 

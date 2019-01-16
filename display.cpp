@@ -18,7 +18,7 @@
 extern struct _State Airplane[N];
 extern struct _Point ARRON, AWARD, ADDUM, RJTT, RJTTnr, RJTTnl, RJTTsr, RJTTsl;
 extern struct _Point STONE, COLOR, CURRY, COUPE, CUTIE, CREAM, CLOAK, CAMEL, CACAO;    //北風・北東からくる便
-extern struct _Point BRITZ, BRASS, BACON, BIBLO, BEAST, BONDO, LOC;  //南風・南西からくる便・ADDUMから続く
+extern struct _Point BLITZ, BRASS, BACON, BIBLO, BEAST, BONDO, LOC;  //南風・南西からくる便・ADDUMから続く
 extern struct _Point DREAD, DENNY, DATUM, DYUKE, BONUS;  //南風・北東からくる便・STONEから続く
 struct _Memory Memory;
 
@@ -28,7 +28,7 @@ int ORDER, changeable = 1;
 extern int TIME[3];
 std::deque<double> quex[N];
 std::deque<double> quey[N];
-std::string t, hv;
+std::string t, hv, arrivetime[N];
 
 int preMousePositionX;
 int preMousePositionY;
@@ -38,6 +38,9 @@ double marginx = 1024.0, marginy = 512.0;
 bool mouseLeftPressed;
 bool mouseRightPressed;
 double modelScale = -90;
+double arrival_posy[N];
+double pos = 0.75;
+double arrival_posx = -0.98;
 
 double Trance_x(double x) { return -x * 2048.0 / 451.9 + 1024.0; };
 
@@ -114,6 +117,8 @@ void disp_airplane() {
     glEnd();
 }
 
+int first = 1;
+
 void DrawString(std::string str, double x0, double y0) {
     // 平行投影にする
     glMatrixMode(GL_PROJECTION);
@@ -128,7 +133,10 @@ void DrawString(std::string str, double x0, double y0) {
     int size = (int) str.size();
     for (int i = 0; i < size; ++i) {
         char ic = str[i];
-        glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ic);
+        if (first) {
+            glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ic);
+            first = 0;
+        } else { glutBitmapCharacter(GLUT_BITMAP_9_BY_15, ic); }
     }
 
     glPopMatrix();
@@ -192,13 +200,29 @@ void display(void) {
     glColor4f(1.0, 1.0, 1.0, 0.0);    // 点の色(RGBA)
     glPushMatrix();
     for (int i = 0; i < N; ++i) {
-        glPushMatrix();
-        glTranslated(Airplane[i].x, Airplane[i].y, 0.0);
-        glRotated(90.0 + toFreq(Airplane[i].direction), 0, 0, 1);
-        glScaled(0.6, 0.3, 0);
-        glTranslated(-25.0, -50.0, 0.0);
-        disp_airplane();
-        glPopMatrix();
+        if (!Airplane[i].ARRIVED) {
+            glPushMatrix();
+            glTranslated(Airplane[i].x, Airplane[i].y, 0.0);
+            glRotated(90.0 + toFreq(Airplane[i].direction), 0, 0, 1);
+            glScaled(0.6, 0.3, 0);
+            glTranslated(-25.0, -50.0, 0.0);
+            disp_airplane();
+            glPopMatrix();
+        } else {
+            if (arrival_posy[i] == 1) {
+                arrival_posy[i] = pos;
+                if (TIME[2] < 10) { arrivetime[i] = "0" + std::to_string(TIME[2]) + ":"; }
+                else { arrivetime[i] = std::to_string(TIME[2]) + ":"; }
+                if (TIME[1] < 10) { arrivetime[i] += "0" + std::to_string(TIME[1]) + ":"; }
+                else { arrivetime[i] += std::to_string(TIME[1]) + ":"; }
+                if (TIME[0] < 10) { arrivetime[i] += "0" + std::to_string(TIME[0]) + "."; }
+                else { arrivetime[i] += std::to_string(TIME[0]) + "."; }
+                pos -= 0.05;
+            }
+            glColor4f(1.0, 0.0, 0.3, 0.0);    // 点の色(RGBA)
+            DrawString(Airplane[i].callsign + " arrived at " + arrivetime[i], arrival_posx, arrival_posy[i]);
+            glColor4f(1.0, 1.0, 1.0, 0.0);    // 点の色(RGBA)
+        }
     }
     glPopMatrix();
     glLineWidth(1.0);
@@ -214,7 +238,26 @@ void display(void) {
         glEnd();
     }
 
-
+    DrawString(t, -0.98, 0.85);
+    glColor4f(1.0, 0.0, 0.3, 0.0);    // 点の色(RGBA)
+    for (int m = 0; m < N; ++m) {
+        if (!Airplane[m].ARRIVED) {
+            DrawString(Airplane[m].callsign + " from " + Airplane[m].from,
+                       (-Airplane[m].x + viewPointCenterx) / 1024.0 / tan(toRad(modelScale / 2.0)) + 0.005,
+                       (Airplane[m].y - viewPointCentery) / 512.0 / tan(toRad(modelScale / 2.0)) + 0.0675);
+            hv = std::to_string(Airplane[m].height);
+            for (int i = 0; i < 4; ++i) { hv.pop_back(); }
+            hv += "[m]";
+            DrawString(hv, (-Airplane[m].x + viewPointCenterx) / 1024.0 / tan(toRad(modelScale / 2.0)) + 0.02,
+                       (Airplane[m].y - viewPointCentery) / 512.0 / tan(toRad(modelScale / 2.0)) + 0.0075);
+            hv = std::to_string(toKm(Airplane[m].velocity));
+            for (int i = 0; i < 4; ++i) { hv.pop_back(); }
+            hv += "[km/h]";
+            DrawString(hv, (-Airplane[m].x + viewPointCenterx) / 1024.0 / tan(toRad(modelScale / 2.0)) + 0.02,
+                       (Airplane[m].y - viewPointCentery) / 512.0 / tan(toRad(modelScale / 2.0)) + 0.0375);
+        }
+    }
+    glColor4f(1.0, 1.0, 1.0, 0.0);    // 点の色(RGBA)
     if (Memory.Wind_direction == 1) { DrawString("WIND : NORTH", -0.98, 0.95); }
     else { DrawString("WIND : SOUTH", -0.98, 0.95); }
     if (Memory.Wait_order == 1) { DrawString("HOLD : ON", -0.98, 0.9); }
@@ -228,30 +271,12 @@ void display(void) {
         }
         if (l != 0) { t += ":"; }
     }
-    DrawString(t, -0.98, 0.85);
-    glColor4f(1.0, 0.0, 0.0, 0.0);    // 点の色(RGBA)
-    for (int m = 0; m < N; ++m) {
-        DrawString(Airplane[m].callsign + " from " + Airplane[m].from,
-                   (-Airplane[m].x + viewPointCenterx) / 1024.0 / tan(toRad(modelScale / 2.0)) + 0.005,
-                   (Airplane[m].y - viewPointCentery) / 512.0 / tan(toRad(modelScale / 2.0)) + 0.0675);
-        hv = std::to_string(Airplane[m].height);
-        for (int i = 0; i < 4; ++i) { hv.pop_back(); }
-        hv += "[m]";
-        DrawString(hv, (-Airplane[m].x + viewPointCenterx) / 1024.0 / tan(toRad(modelScale / 2.0)) + 0.02,
-                   (Airplane[m].y - viewPointCentery) / 512.0 / tan(toRad(modelScale / 2.0)) + 0.0075);
-        hv = std::to_string(toKm(Airplane[m].velocity));
-        for (int i = 0; i < 4; ++i) { hv.pop_back(); }
-        hv += "[km/h]";
-        DrawString(hv, (-Airplane[m].x + viewPointCenterx) / 1024.0 / tan(toRad(modelScale / 2.0)) + 0.02,
-                   (Airplane[m].y - viewPointCentery) / 512.0 / tan(toRad(modelScale / 2.0)) + 0.0375);
-    }
-    glColor4f(1.0, 1.0, 1.0, 0.0);    // 点の色(RGBA)
-
     /* ダブルバッファリング */
     glutSwapBuffers();
 }
 
 void Init() {
+    for (int i = 0; i < N; ++i) { arrival_posy[i] = 1; }
     FILE *fp;
     int x, y;
 
@@ -311,6 +336,10 @@ void keyboard(unsigned char key, int x, int y) {
     if (changeable) {
         if (key == 'n') Memory.Wind_direction = 1;  //北風
         if (key == 's') Memory.Wind_direction = 0;  //南風
+    }
+    if (key == '0') {
+        modelScale = -90;
+        viewPointCentery = viewPointCenterx = 0.0;
     }
 }
 
