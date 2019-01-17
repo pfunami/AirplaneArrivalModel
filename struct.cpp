@@ -13,7 +13,7 @@
 #include <sstream>
 
 extern struct _State Airplane[N];
-extern struct _Point ARRON, AWARD, ADDUM, RJTT, RJTTnr, RJTTnl, RJTTsr, RJTTsl;
+extern struct _Point A, ARRON, AWARD, ADDUM, RJTT, RJTTnr, RJTTnl, RJTTsr, RJTTsl;
 extern struct _Point STONE, COLOR, CURRY, COUPE, CUTIE, CREAM, CLOAK, CAMEL, CACAO;    //北風・北東からくる便
 extern struct _Point BLITZ, BRASS, BACON, BIBLO, BEAST, BONDO, LOC;  //南風・南西からくる便・ADDUMから続く
 extern struct _Point DREAD, DENNY, DATUM, DYUKE, BONUS;  //南風・北東からくる便・STONEから続く
@@ -74,6 +74,10 @@ void Initialize_Point() {
     ADDUM.holdv = toDot(463);
     ADDUM.canhold = 1;
 
+    A.x = 226;
+    A.y = 265;
+    A.next = &ADDUM;
+
     BLITZ.x = 350;
     BLITZ.y = 107;
     BLITZ.next = &BRASS;
@@ -108,7 +112,7 @@ void Initialize_Point() {
 
     LOC.x = 184;
     LOC.y = -81;
-    LOC.next = &RJTT;
+    LOC.next = &RJTTsr;
 
     STONE.x = 323;
     STONE.y = -345;
@@ -187,7 +191,7 @@ void Initialize_Point() {
 };
 
 void Initialize_Memory() {
-    Memory.Wind_direction = 1;
+    Memory.Wind_direction = 0;
     Memory.Wait_order = 0;
 }
 
@@ -245,6 +249,7 @@ void Initialize_Airplane() {
         else if (data[k][4] == "DATUM") { Airplane[k].nextPoint = &DATUM; }
         else if (data[k][4] == "DYUKE") { Airplane[k].nextPoint = &DYUKE; }
         else if (data[k][4] == "BONUS") { Airplane[k].nextPoint = &BONUS; }
+        else if (data[k][4] == "A") { Airplane[k].nextPoint = &A; }
         else {
             printf("%d???\n", k);
             exit(1);

@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <vector>
 #include <deque>
+#include <string>
+#include <iostream>
 #include "main.hpp"
 #include "func.hpp"
 #include "struct.hpp"
@@ -12,14 +14,14 @@
 
 
 struct _State Airplane[N];
-struct _Point ARRON, AWARD, ADDUM, RJTT, RJTTnr, RJTTnl, RJTTsr, RJTTsl;    //北風・南西からくる便
+struct _Point A, ARRON, AWARD, ADDUM, RJTT, RJTTnr, RJTTnl, RJTTsr, RJTTsl;    //北風・南西からくる便
 struct _Point STONE, COLOR, CURRY, COUPE, CUTIE, CREAM, CLOAK, CAMEL, CACAO;    //北風・北東からくる便
 struct _Point BLITZ, BRASS, BACON, BIBLO, BEAST, BONDO, LOC;  //南風・南西からくる便・ADDUMから続く
 struct _Point DREAD, DENNY, DATUM, DYUKE, BONUS;  //南風・北東からくる便・STONEから続く
 extern struct _Memory Memory;
 
-int TIME[3] = {0, 21, 17};
-int count = 0;
+int TIME[3] = {0, 25, 16};
+int count = 0, witch = 0;
 extern int ORDER;
 
 double NewDire;
@@ -27,6 +29,7 @@ double pre_x, pre_y, dPos = 0;
 double RemainingDist, RDsub, velAcce, dropAcce;
 double origin;
 double straightDist = 15;
+int sss = 0;
 
 void JudgeState() {
     count++;
@@ -150,13 +153,13 @@ void JudgeState() {
 
             CheckTerritory(&Airplane[i], &Airplane[0], i, area);
             while (!area[0]) {
-                printf("速度調整\n");
+//                printf("速度調整\n");
                 if (!(area[1] || area[2] || area[3] || area[4]) && area[5]) {
                     Airplane[i].velocity = pre_v;
                     Airplane[i].x = pre_x + Airplane[i].velocity * cos(Airplane[i].direction);
                     Airplane[i].y = pre_y + Airplane[i].velocity * sin(Airplane[i].direction);
                     break;
-                } else { Airplane[i].velocity -= toDot(0.1); }
+                } else { Airplane[i].velocity -= toDot(1); }
                 Airplane[i].x = pre_x + Airplane[i].velocity * cos(Airplane[i].direction);
                 Airplane[i].y = pre_y + Airplane[i].velocity * sin(Airplane[i].direction);
                 if (abs(Airplane[i].velocity - pre_v) < abs(VelocityAcceMax)) {
@@ -170,7 +173,7 @@ void JudgeState() {
                     break;
                 } else {
                     Airplane[i].height -= 0.1;
-                    printf("高度調整\n");
+//                    printf("高度調整\n");
                 }
                 if (abs(DropAcceMax) <= abs(Airplane[i].height - pre_h)) { break; }
                 CheckTerritory(&Airplane[i], &Airplane[0], i, area);
@@ -178,7 +181,7 @@ void JudgeState() {
 
             extern double expect_d;
             while (!area[0] && !area[5]) {
-                printf("角度調整\n");
+//                printf("角度調整\n");
                 if ((area[1] || area[4]) && (area[2] || area[3])) {
                     if (abs(expect_d - pre_d) > maxDirection()) {
                         if (expect_d > pre_d) { Airplane[i].direction = pre_d + maxDirection(); }
@@ -211,8 +214,7 @@ void JudgeState() {
 
 
             ///*次の目標ポイントの更新*///---------------------------------------------------------------------------------
-            if (RemainingDist <= 15) {
-                printState(&Airplane[i], i);
+            if (RemainingDist <= 10) {
                 if (Airplane[i].nextPoint->next == nullptr) {
                     printf("[%d] ARRIVED!\n", i);
                     printState(&Airplane[i], i);
@@ -221,25 +223,31 @@ void JudgeState() {
                     if (Memory.Wait_order && !Airplane[i].Turning) {
                         if (Airplane[i].nextPoint->canhold != 0) {
                             ChangeWaitOrder(&Memory.Wait_order, &Airplane[i].phase, &Airplane[i].Turning);
-                            Airplane[i].nextPoint->size++;
+                            Airplane[i].nextPoint->size += 1;
+                            Airplane[i].tag = Airplane[i].nextPoint->size;
                             Airplane[i].initialdir = Airplane[i].direction;
                             Airplane[i].Turning = 1;
                         } else {
                             Airplane[i].nextPoint = Airplane[i].nextPoint->next;
                         }
                     } else if (!Memory.Wait_order && Airplane[i].Turning) {
-                        Airplane[i].nextPoint->size--;
                         Airplane[i].nextPoint = Airplane[i].nextPoint->next;
                         ChangeWaitOrder(&Memory.Wait_order, &Airplane[i].phase, &Airplane[i].Turning);
                     } else if (!Memory.Wait_order && !Airplane[i].Turning) {
-                        Airplane[i].nextPoint = Airplane[i].nextPoint->next;
-                    } else if (Memory.Wait_order && Airplane[i].Turning) {
-                        Airplane[i].phase = 1;
-                        if (Airplane[i].nextPoint->size >= 8) {
-                            Airplane[i].Turning = 0;
-                            Airplane[i].nextPoint->size--;
+                        if (Airplane[i].nextPoint->next == &RJTT || Airplane[i].nextPoint->next == &LOC) {
+                            std::string s = Airplane[i].callsign.substr(0, 3);
+                            if (Memory.Wind_direction) {//北風
+                                if (s == "JAL" || s == "SKY") { Airplane[i].nextPoint = &RJTTnl; }
+                                else { Airplane[i].nextPoint = &RJTTnr; }
+                            } else {
+                                if (s == "JAL" || s == "SKY") { Airplane[i].nextPoint = &LOC; }
+                                else { Airplane[i].nextPoint = &RJTTsl; }
+                            }
+                        } else {
                             Airplane[i].nextPoint = Airplane[i].nextPoint->next;
                         }
+                    } else if (Memory.Wait_order && Airplane[i].Turning) {
+                        Airplane[i].phase = 1;
                     }
                 }
             }

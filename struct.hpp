@@ -16,6 +16,7 @@ struct _Point { //チャート上の各ポイントに相当
     double canhold = 0;
     int size = 0;
     _Point *next;
+    int round;
 };
 
 struct _State { //飛行機の状態を示す
@@ -37,6 +38,7 @@ struct _State { //飛行機の状態を示す
     double initialy;
     std::string callsign;
     std::string from;
+    int tag;
 };
 
 struct _Memory {    //世界の情報を示す
