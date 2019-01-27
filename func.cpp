@@ -6,7 +6,7 @@
 #include <cstdio>
 #include "func.hpp"
 #include "main.hpp"
-#include "struct.hpp"
+#include "method.hpp"
 
 double toRad(double r) { return r * M_PI / 180.0; }
 

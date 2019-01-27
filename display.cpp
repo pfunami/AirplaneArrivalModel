@@ -12,7 +12,7 @@
 #include <string>
 #include "main.hpp"
 #include "func.hpp"
-#include "struct.hpp"
+#include "method.hpp"
 #include "display.hpp"
 
 extern struct _State Airplane[N];

@@ -2,7 +2,7 @@
 // Created on 2018/12/12.
 //
 
-#include "struct.hpp"
+#include "method.hpp"
 #include "main.hpp"
 #include "func.hpp"
 #include <cstdio>

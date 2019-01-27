@@ -9,7 +9,7 @@
 #include <iostream>
 #include "main.hpp"
 #include "func.hpp"
-#include "struct.hpp"
+#include "method.hpp"
 #include "display.hpp"
 
 
