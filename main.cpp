@@ -20,8 +20,8 @@ struct _Point BLITZ, BRASS, BACON, BIBLO, BEAST, BONDO, LOC;  //南風・南西�
 struct _Point DREAD, DENNY, DATUM, DYUKE, BONUS;  //南風・北東からくる便・STONEから続く
 extern struct _Memory Memory;
 
-int TIME[3] = {0, 25, 16};
-int count = 0, witch = 0;
+int TIME[3] = {0, 40, 17};
+int count = 0;
 extern int ORDER;
 
 double NewDire;
@@ -29,7 +29,6 @@ double pre_x, pre_y, dPos = 0;
 double RemainingDist, RDsub, velAcce, dropAcce;
 double origin;
 double straightDist = 15;
-int sss = 0;
 
 void JudgeState() {
     count++;

@@ -198,7 +198,7 @@ void Initialize_Memory() {
 void Initialize_Airplane() {
     using namespace std;
     //csvから航空機情報を読み込み
-    ifstream ifs("data2.csv");
+    ifstream ifs("data.csv");
     if (!ifs) {
         cout << "Error! File can not be opened" << endl;
         exit(1);
