@@ -191,7 +191,7 @@ void Initialize_Point() {
 };
 
 void Initialize_Memory() {
-    Memory.Wind_direction = 0;
+    Memory.Wind_direction = 1;
     Memory.Wait_order = 0;
 }
 
