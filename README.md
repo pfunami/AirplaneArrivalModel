@@ -21,4 +21,7 @@ In other cases it can be executed with `. / Program`.
 - Right click + Mouse up / down move: Scale  
 - Left click + Mouse move: Move point of view
 
+## Note
+This program uses OpenGL. Therefore, OpenGL must be installed on the execution environment. In addition, the notation that includes OpenGL in this program is Mac OS 's notation. You need to change include notation appropriately to suit your own environment.
+
 （It is part of "Special Exercise in Information Science1" in University of Tsukuba, College of Information Science.）
